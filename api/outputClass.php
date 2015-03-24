@@ -5,7 +5,17 @@ class outputClass {
 
 
     public function __construct() {
-        var_dump(Database::getAll('account'));
+        $array = array(
+            "company_id" => 1,
+            "name" => 'Jax',
+            "surname" => 'Seymour',
+            "email" => 'jax@seymour.com',
+            "available_h" => '1234',
+            );
+        // var_dump(Db::createAccount($array));
+        // var_dump(Security::saltPassword('hehe'));
+        
+        var_dump(Db::createStaff($array));
     }
 }
-$bar = new outputClass();
+$output = new outputClass();

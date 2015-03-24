@@ -1,7 +1,8 @@
 <?php
-    //define class path and class child folders
-    define("classPath","");
-    define("class_dir_array", serialize (array ("database")));
+//define class path and class child folders
+define("classPath","");
+define("class_dir_array", serialize (array ("library")));
+
 spl_autoload_register(function($class_name) 
     {
        $dir_array = unserialize(class_dir_array);
