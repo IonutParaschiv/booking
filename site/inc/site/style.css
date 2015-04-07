@@ -1,0 +1,71 @@
+/*BOOTSTRAP OVERRIDE*/
+.container-fluid{
+    padding-left:100px;
+    padding-right: 100px;
+}
+
+
+.main-nav,
+.main-nav .nav{
+    background-color: #454545;
+}
+.main-nav a{
+    text-transform: uppercase;
+    color:#bebebe;
+     background-color: #454545;
+}
+.main-nav li a:hover,
+.main-nav li a:focus{
+    color: #fff;
+    background-color: #454545 ;
+}
+.main-nav li:hover{
+    background-color: #454545;
+}
+
+/*LOGIN FORM*/
+.loginModal{
+    margin-top:100px;
+}
+.loginModal .modal-content{
+    border-radius: 0;
+}
+.loginModal .modal-header{
+    background-color: #454545;
+    color:#fff;
+}
+.loginModal .modal-body{
+}
+.loginModal .close{
+    color:#fff;
+}
+.loginModal form input{
+    border-radius: 0;
+}
+.loginModal .userfeedback{
+    min-height: 72px;
+}
+#userImg{
+    width:100px;
+    height:95px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: white;
+    margin: auto;
+    margin-top:-40px;
+}
+#userImg img{
+    width: 100px;
+}
+/*CONTENT*/
+.wide{
+    background-image: url('../img/main_header.png');
+    min-height: 400px;
+}
+
+
+
+
+
+
+

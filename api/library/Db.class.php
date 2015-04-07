@@ -77,13 +77,14 @@ class Db{
  * @param  [object] $params [parameters to be added into the database]
  * @return [object]         [in case of success returns the created company]
  */
-    public function createCompany($params){
+    public function createCompany($accountid = 0, $params){
+        $userid = $accountid == 0 ? $params->account_id : $accountid;
         $conn = self::conn();
         $query = "INSERT INTO " . self::DATABASE_NAME. ".company (id, account_id, name, email, address, opening_h) 
                     VALUES ('', :account_id, :name, :email, :address, :opening_h)";
         $stmt = $conn->prepare($query);
 
-        $stmt->bindParam(':account_id', $params->account_id);
+        $stmt->bindParam(':account_id', $userid);
         $stmt->bindParam(':name', $params->name);
         $stmt->bindParam(':email', $params->email);
         $stmt->bindParam(':address', $params->address);
@@ -254,7 +255,7 @@ class Db{
 
     public function getLogin($user){
         $conn = self::conn();
-        $query = "SELECT email, password, salt, apiKey FROM " .self::DATABASE_NAME . ".account WHERE email = :email";
+        $query = "SELECT id, email, password, salt, apiKey FROM " .self::DATABASE_NAME . ".account WHERE email = :email";
         $stmt = $conn->prepare($query);
 
         $stmt->bindParam(':email', $user);

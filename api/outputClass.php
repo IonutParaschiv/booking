@@ -35,15 +35,15 @@ class outputClass {
             "end" => '2015-03-24 20:31:22'
             );
         $account = array(
-            "name" => 'Ionut',
-            "surname" => 'Paraschiv',
-            "email" => 'ionut@htd.ro',
+            "name" => 'Jax',
+            "surname" => 'Seymour',
+            "email" => 'jax@jax.ro',
             "password" => '1234',
 
             );
-        // var_dump(Db::createAccount($account));
+         var_dump(Db::createAccount($account));
         
-        var_dump(Security::checkLogin('ionut@htd.ro', '1234')); 
+        //var_dump(Security::checkLogin('ionut@htd.ro', '1234')); 
         
     }
 }

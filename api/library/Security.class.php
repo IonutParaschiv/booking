@@ -30,7 +30,8 @@ class Security{
         $user = Db::getLogin($username);
         if(!empty($user)){
             if($user['0']['password'] === self::hashString($password.$user['0']['salt'])){
-                return true;
+                $response = array('success'=>true, 'key'=>$user['0']['apiKey'], 'uid' => $user['0']['id']);
+                return $response;
             }else{
                 return false;
             }

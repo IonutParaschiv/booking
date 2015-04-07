@@ -10,7 +10,19 @@ $access = false;
         $username = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
 
-        $access = Security::checkLogin($username, $password);
+        $response = Security::checkLogin($username, $password);
+
+        if($response['success']){
+            if($_POST['key'] === $response['key']){
+                $access = true;
+                $accountId = $response['uid'];
+            }else{
+                 header('HTTP/1.0 401 Unauthorized');
+                 echo 'Invalid Key';
+                 die();
+            }
+        }
+
 
     }
 
@@ -38,7 +50,7 @@ if($access){
                             echo "error";
                         }
                     }else{
-                        $response = Db::createCompany(json_decode($_POST['json']));
+                        $response = Db::createCompany($accountId, json_decode($_POST['json']));
                         echo json_encode($response);
                     }
                     break;
@@ -58,10 +70,6 @@ if($access){
                     }
                     break;
                 }
-            break;
-        
-        default:
-            # code...
             break;
     }
 }else{
