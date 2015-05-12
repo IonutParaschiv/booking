@@ -1,14 +1,16 @@
 var ajax = {
 
 post : function(args){
+    var response = 'no response';
     $.ajax({
       type: "POST",
       url: "inc/lib/php/RequestHandler.php",
       data: args,
       success: function(data){
-        return data
+        response = data;
       },
     });
+    return response;
 }
 
 
@@ -22,6 +24,22 @@ var user = {
 
 
 login: function(){
+    var args = $('#loginForm').serialize();
+    $.ajax({
+      type: "POST",
+      url: "inc/lib/php/RequestHandler.php",
+      data: args,
+      success: function(data){
+        data = JSON.parse(data)
+        console.dir(data);
+        if(!data.success){
+            feedback.alert('.userfeedback_login', data.message);
+            return false
+        }else{
+            location.reload();
+        }
+      },
+    });
 },
 
 
@@ -34,7 +52,7 @@ register: function(){
       success: function(data){
         data = JSON.parse(data);
         if(!data.success){
-            feedback.alert('.userfeedback_reg', data);
+            feedback.alert('.userfeedback_reg', data.message);
             return false
         }
         $("#registerForm").hide();

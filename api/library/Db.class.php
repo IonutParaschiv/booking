@@ -1,6 +1,7 @@
 <?php
 class Db{
     const DATABASE_NAME = "bachelor";
+    const SHARED_SECRET = "jaxierulestheblock";
 /**
  * this function connects to the database
  * @return [type] [description]
@@ -43,18 +44,24 @@ class Db{
  * @param  [array] $params parameters to be used in the account creation
  * @return [object]         in case of success , returns account object
  */
-    public function createAccount($params){
+    public function createAccount($params, $master = false, $shared_secret = '', $apiKey = ''){
         if( empty($params->email) || empty($params->password) ){
             return array("status"=>400, "message"=>"missing parameter");
         }else{
             $conn = self::conn();
-            $query =    "INSERT INTO " .self::DATABASE_NAME. ".account ( id ,  name ,  surname ,  email ,  password ,  join_date , salt, token, apiKey ) 
-                        VALUES ('', :name, :surname, :email, :password, NOW(), :salt, :token, :apiKey)";
+            $table = 'account';
+            if($master == true && $shared_secret = self::SHARED_SECRET){
+                $table = 'master_account';
+            }
+            $query =    "INSERT INTO " .self::DATABASE_NAME. ".".$table." ( id ,  name ,  surname ,  email ,  password ,  join_date , salt, token, apiKey, parent, master) 
+                        VALUES ('', :name, :surname, :email, :password, NOW(), :salt, :token, :apiKey, :parent, :master)";
             $stmt = $conn->prepare($query);
 
             $apiKey = Security::hashString($params->name.$params->email.time());
             $passComponents = Security::saltPassword($params->password);
 
+
+            $parent = 1;
             $stmt->bindParam(':name', $params->name);
             $stmt->bindParam(':surname', $params->surname);
             $stmt->bindParam(':email', $params->email);
@@ -62,7 +69,8 @@ class Db{
             $stmt->bindParam(':apiKey', $apiKey);
             $stmt->bindParam(':salt', $passComponents['salt']);
             $stmt->bindParam(':token', $apiKey);
-
+            $stmt->bindParam(':parent', $parent);
+            $stmt->bindParam(':master', $master);
             $result = $stmt->execute();
 
             if($result){
@@ -241,7 +249,7 @@ class Db{
     
     public function verifyKey($apiKey){
         $conn = self::conn();
-        $query = "SELECT id, name FROM ". self::DATABASE_NAME .".account WHERE apiKey = :key";
+        $query = "SELECT id, name, master FROM ". self::DATABASE_NAME .".master_account WHERE apiKey = :key";
         $stmt = $conn->prepare($query);
 
         $stmt->bindParam(':key', $apiKey);
@@ -249,13 +257,24 @@ class Db{
         $result = $stmt->execute();
         if($result){
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            $conn = self::conn();
+            $query = "SELECT id, name, master FROM ". self::DATABASE_NAME .".account WHERE apiKey = :key";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':key', $apiKey);
+
+            $result = $stmt->execute();
+            if($result){
+                return $result;
+            }
         }
         return "key " .$apiKey;
     }
 
     public function getLogin($user){
         $conn = self::conn();
-        $query = "SELECT id, email, password, salt, apiKey FROM " .self::DATABASE_NAME . ".account WHERE email = :email";
+        $query = "SELECT id, email, password, salt, apiKey, token FROM " .self::DATABASE_NAME . ".account WHERE email = :email";
         $stmt = $conn->prepare($query);
 
         $stmt->bindParam(':email', $user);
@@ -264,7 +283,17 @@ class Db{
         if($result){
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }else{
-            return false;
+            $conn = self::conn();
+            $query = "SELECT id, email, password, salt, apiKey FROM " .self::DATABASE_NAME . ".account WHERE email = :email";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':email', $user);
+            $result = $stmt->execute();
+            if($result){
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }else{
+                return false;
+            }
         }
     }
 

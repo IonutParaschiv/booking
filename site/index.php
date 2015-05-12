@@ -14,8 +14,11 @@
     <ul class="nav navbar-nav navbar-default navbar-right">
       <li><a href="#">Home</a></li>
       <li><a href="#">Profile</a></li>
-      <li><a href="#" data-toggle="modal" data-target=".loginModal">Login</a></li>
-      <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>
+      <?php if(empty($_COOKIE['userSession'])){
+        echo '<li><a href="#" data-toggle="modal" data-target=".loginModal">Login</a></li>
+      <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>';
+      }
+      ?>
     </ul>
 </div>
 <div class="wide"></div>
@@ -37,12 +40,13 @@
         </div>
       </div>
       <div class="modal-body">
-      <div class="userfeedback">
+      <div class="userfeedback_login">
           
       </div>
-        <form>
+        <form id="loginForm">
           <div class="form-group">
-            <input type="text" class="form-control" name="username" placeholder="Username" id="username">
+            <input type="hidden" name="method" value="login"/>
+            <input type="text" class="form-control" name="email" placeholder="Email" id="email">
             <span class="glyphicon-class"></span>
           </div>
           <div class="form-group">
@@ -101,4 +105,3 @@
 
 </body>
 </html>
-

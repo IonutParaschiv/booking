@@ -28,9 +28,15 @@ class Security{
     }
     public function checkLogin($username, $password){
         $user = Db::getLogin($username);
+        // var_dump($user);die();
         if(!empty($user)){
             if($user['0']['password'] === self::hashString($password.$user['0']['salt'])){
-                $response = array('success'=>true, 'key'=>$user['0']['apiKey'], 'uid' => $user['0']['id']);
+                $response = array(
+                    'success'=>true, 
+                    'key'=>$user['0']['apiKey'],
+                    'token' => $user['0']['token'],
+                    'uid' => $user['0']['id']
+                );
                 return $response;
             }else{
                 return false;
