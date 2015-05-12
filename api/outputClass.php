@@ -35,9 +35,9 @@ class outputClass {
             "end" => '2015-03-24 20:31:22'
             );
         $account = array(
-            "name" => 'Jax',
-            "surname" => 'Seymour',
-            "email" => 'jax@jax.ro',
+            "name" => 'Master',
+            "surname" => 'Master',
+            "email" => 'master@api.com',
             "password" => '1234',
 
             );

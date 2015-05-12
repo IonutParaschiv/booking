@@ -44,7 +44,7 @@ class Db{
  * @return [object]         in case of success , returns account object
  */
     public function createAccount($params){
-        if( empty($params['email']) || empty($params['password']) ){
+        if( empty($params->email) || empty($params->password) ){
             return array("status"=>400, "message"=>"missing parameter");
         }else{
             $conn = self::conn();
@@ -52,12 +52,12 @@ class Db{
                         VALUES ('', :name, :surname, :email, :password, NOW(), :salt, :token, :apiKey)";
             $stmt = $conn->prepare($query);
 
-            $apiKey = Security::hashString($params['name'].$params['email'].time());
-            $passComponents = Security::saltPassword($params['password']);
+            $apiKey = Security::hashString($params->name.$params->email.time());
+            $passComponents = Security::saltPassword($params->password);
 
-            $stmt->bindParam(':name', $params['name']);
-            $stmt->bindParam(':surname', $params['surname']);
-            $stmt->bindParam(':email', $params['email']);
+            $stmt->bindParam(':name', $params->name);
+            $stmt->bindParam(':surname', $params->surname);
+            $stmt->bindParam(':email', $params->email);
             $stmt->bindParam(':password',$passComponents['password']);
             $stmt->bindParam(':apiKey', $apiKey);
             $stmt->bindParam(':salt', $passComponents['salt']);

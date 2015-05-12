@@ -71,6 +71,19 @@ if($access){
                     break;
                 }
             break;
+        case 'account':
+            switch ($method) {
+                case 'POST':
+                // var_dump($_POST);die();
+                    $response = Db::createAccount(json_decode($_POST['json']));
+                    header('HTTP/1.0 200 OK');
+                    echo json_encode($response);
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
     }
 }else{
     header('WWW-Authenticate: Basic realm="My Realm"');
