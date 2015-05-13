@@ -46,9 +46,9 @@ class outputClass {
         $account->surname = 'master';
         $account->email = 'second@api.com';
         $account->password = 'ionut280590';
-         var_dump(Db::createAccount($account, true, 'jaxierulestheblock'));
+         // var_dump(Db::createAccount($account, true, 'jaxierulestheblock'));
          // var_dump(Db::createAccount($account));
-        
+        var_dump(Db::getAccount('1'));
         //var_dump(Security::checkLogin('ionut@htd.ro', '1234')); 
         
     }

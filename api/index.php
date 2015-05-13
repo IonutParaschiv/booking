@@ -13,6 +13,7 @@ $access = false;
         $response = Security::checkLogin($username, $password);
         if($response['success']){
             $access = true;
+            $accountId = $response['uid'];
             // if($_POST['key'] === $response['key']){
             //     $access = true;
             //     $accountId = $response['uid'];
@@ -43,6 +44,50 @@ if($access){
     $resource = array_values($resource);
 
     switch ($resource['0']) {
+        case 'account':
+            switch ($method) {
+                case 'POST':
+                    if(!empty($resource['1'])){
+                        if(is_numeric($resource['1'])){
+                            $accountId = $resource['1'];
+
+                            $response = Db::editAccount(json_decode($_POST['json']), $accountId);
+                            echo json_encode($response);
+
+                        }else{
+                            header("HTTP/1.0 400 Bad Request");
+                            echo "HTTP/1.0 400 Bad Request";
+                            die();
+                        }
+                    }else{
+                        $response = Db::createAccount(json_decode($_POST['json']), false, '', $_POST['key']);
+                        header("HTTP/1.0 200 OK");
+                        echo json_encode($response);   
+                    }
+                    break;
+                case 'GET':
+                    if(!empty($resource['1'])){
+                            if(is_numeric($resource['1'])){
+                            $accountId = $resource['1'];
+                            $response = Db::getAccount($accountId);
+                            echo json_encode($response);
+                        }else{
+                            header("HTTP/1.0 400 Bad Request");
+                            echo "HTTP/1.0 400 Bad Request";
+                            die();
+                        }
+                    }else{
+                        $params = json_decode($_GET['json']);
+                        $response = Security::checkLogin($params->email, $params->password);
+                        echo json_encode($response);
+                    }
+                    break;
+                default:
+                    header('HTTP/1.0 501 Not Implemented');
+                    die();
+                    break;
+            }
+            break;
         case 'company':
              switch ($method) {
                 case 'POST':
@@ -81,23 +126,6 @@ if($access){
 
                 }
             break;
-        case 'account':
-            switch ($method) {
-                case 'POST':
-                    $response = Db::createAccount(json_decode($_POST['json']), false, '', $_POST['key']);
-                    header("HTTP/1.0 200 OK");
-                    echo json_encode($response);
-                    break;
-                case 'GET':
-                    $params = json_decode($_GET['json']);
-                    $response = Security::checkLogin($params->email, $params->password);
-                    echo json_encode($response);
-                    break;
-                default:
-                    header('HTTP/1.0 501 Not Implemented');
-                    die();
-                    break;
-            }
         default:
             header('HTTP/1.0 404 Not Found');
             die();

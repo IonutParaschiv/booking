@@ -2,21 +2,22 @@
 <html>
 <head>
     <title>BookRest</title>
-    <link rel="stylesheet" href="inc/lib/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="inc/site/style.css">
-    <script type="text/javascript" src="inc/lib/js/jquery-2.1.3.min.js"></script>
-    <script type="text/javascript" src="inc/lib/js/bootstrap.js"></script>
-    <script type="text/javascript" src="inc/site/master.js"></script>
+    <link rel="stylesheet" href="/bachelor/site/inc/lib/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/bachelor/site/inc/site/style.css">
+    <script type="text/javascript" src="/bachelor/site/inc/lib/js/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="/bachelor/site/inc/lib/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bachelor/site/inc/site/master.js"></script>
 </head>
 <body>
 
 <div class="main-nav container-fluid">
     <ul class="nav navbar-nav navbar-default navbar-right">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Profile</a></li>
+      <li><a href="/bachelor/site">Home</a></li>
       <?php if(empty($_COOKIE['userSession'])){
         echo '<li><a href="#" data-toggle="modal" data-target=".loginModal">Login</a></li>
       <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>';
+      }else{
+        echo '<li><a href="views/account.php">My Account</a></li>';
       }
       ?>
     </ul>

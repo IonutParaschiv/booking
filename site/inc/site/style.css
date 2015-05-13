@@ -62,8 +62,20 @@
     background-image: url('../img/main_header.png');
     min-height: 400px;
 }
-
-
+/*CALENDAR*/
+.calendarContainer{
+    width:500px;
+    height:500px;
+    display: block;
+    left:0;
+    position: absolute;
+    top:100px;
+}
+.calendarContainer iframe{
+    width: 100%;
+    height: 100%;
+    border:none;
+}
 
 
 

@@ -81,6 +81,54 @@ class Db{
         }
     }
 /**
+ * This functions gets a single account
+ * @param  [type] $accId [description]
+ * @return [type]        [description]
+ */
+    public function getAccount($accId){
+        $conn = self::conn();
+        $query = "SELECT id, name, surname, email, join_date, apiKey FROM ".self::DATABASE_NAME.".account WHERE id = :id";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(":id", $accId);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+    }
+/**
+ * This function edits an existing account
+ * @param  array $params parameters to be changed
+ * @param  int $accId  the account id
+ * @return [object]         full account object
+ */
+    public function editAccount($params, $accId){
+//UPDATE `bachelor`.`account` SET `name` = 'testeress', `surname` = 'testingsensensen' WHERE `account`.`id` = 2;
+        unset($params->id, $params->apiKey);
+        $fields = array();
+        foreach ($params as $key => $value) {
+            $set = $key." = '".$value."'";
+            array_push($fields, $set);
+        }
+        $fields = implode(', ', $fields);
+
+        $conn = self::conn();
+        $query = "UPDATE ".self::DATABASE_NAME.".account SET ".$fields." WHERE account.id = :id";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':id', $accId);
+
+        $result = $stmt->execute();
+        if($result){
+            $response = self::getAccount($accId); 
+            return $response;  
+        }else{
+            return false;
+        }
+    }
+/**
  * This function inserts a company into the database
  * @param  [object] $params [parameters to be added into the database]
  * @return [object]         [in case of success returns the created company]
