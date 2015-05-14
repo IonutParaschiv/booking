@@ -30,12 +30,14 @@ class Security{
         $user = Db::getLogin($username);
         // var_dump($user);die();
         if(!empty($user)){
-            if($user['0']['password'] === self::hashString($password.$user['0']['salt'])){
+            if(     ($user['0']['token'] === $password) 
+                ||  ($user['0']['password'] === self::hashString($password.$user['0']['salt']))   ){
                 $response = array(
                     'success'=>true, 
                     'key'=>$user['0']['apiKey'],
                     'token' => $user['0']['token'],
-                    'uid' => $user['0']['id']
+                    'uid' => $user['0']['id'],
+                    'email' => $user['0']['email']
                 );
                 return $response;
             }else{

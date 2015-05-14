@@ -3,7 +3,9 @@
     padding-left:100px;
     padding-right: 100px;
 }
-
+.nav-pills>li>a{
+    border-radius: 0;
+}
 
 .main-nav,
 .main-nav .nav{
@@ -23,6 +25,22 @@
     background-color: #454545;
 }
 
+.subnav {
+    width: 100%;
+}
+
+.stackedNav{
+    width:170px;
+    background-color: #3f3f3f;
+    color:white;
+}
+.stackedNav a{
+    color: #bebebe;
+}
+
+.stackedNav li.active a{
+    color: #bebebe;
+}
 /*LOGIN FORM*/
 .loginModal{
     margin-top:100px;
@@ -76,8 +94,20 @@
     height: 100%;
     border:none;
 }
-
-
+/*Account settings*/
+.accountForm{
+    width:60%;
+    margin: auto;
+    outline: 1px solid #efefef;
+    padding:20px;
+}
+/*Comapany settings*/
+.companyContainer{
+    width:75%;
+    outline: 1px solid black;
+    margin-top:-164px;
+    height: 450px;
+}
 
 
 

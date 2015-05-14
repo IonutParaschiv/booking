@@ -59,6 +59,18 @@ register: function(){
         feedback.success('.userfeedback_reg', 'Your account has been created');
       },
     });
+},
+
+edit: function(){
+    var args = "method=editAccount&"+$("#editAccountForm").serialize();
+    $.ajax({
+      type: "POST",
+      url: "/bachelor/site/inc/lib/php/RequestHandler.php",
+      data: args,
+      success: function(data){
+        console.dir(JSON.parse(data));
+      },
+    });
 }
 
 }

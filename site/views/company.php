@@ -26,18 +26,21 @@
 </div>
 <div class="wide-nav">
     <ul class='nav navbar-nav navbar-default navbar-left subnav'>
-      <li><a href="#">Bookings</a></li>
+      <li><a href="/bachelor/site/views/account.php">Bookings</a></li>
       <li><a href="/bachelor/site/views/settings.php">Settings</a></li>
       <li><a href="/bachelor/site/views/company.php">Company</a></li>
       <li><a href="#">Widget</a></li>
-        
+    </ul>
+</div>
+<div class="stackedNav">
+    <ul class="nav nav-pills nav-stacked">
+      <li class="active"><a href="#">Manage Company</a></li>
+      <li><a href="#">Manage Staff</a></li>
+      <li><a href="#">Manage Services</a></li>
+      <li><a href="#">Menu 3</a></li>
     </ul>
 </div>
 
-<div class="container">
-    <div class="bookingsView">
-        <div class="calendarContainer">
-            <iframe src="/bachelor/site/inc/lib/fullcalendar/demos/default.html"></iframe>
-        </div>
-    </div>
+<div class="container companyContainer">
+
 </div>

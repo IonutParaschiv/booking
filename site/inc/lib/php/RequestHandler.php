@@ -1,5 +1,7 @@
 <?php
-
+if(!isset($_SESSION)){
+    session_start(); 
+}
 switch ($_POST['method']) {
     case 'register':
         unset($_POST['method']);
@@ -65,9 +67,9 @@ switch ($_POST['method']) {
                 $response = array(
                     'success' =>true
                     );
-                session_start();
                 $_SESSION['token'] = $responseJson->token;
                 $_SESSION['uid'] = $responseJson->uid;
+                $_SESSION['email'] = $responseJson->email;
                 session_write_close();
                 $usrArray = array(
                     'token' => $responseJson->token,
@@ -95,14 +97,54 @@ switch ($_POST['method']) {
             echo json_encode($response);
             die();
         break;
-    
+        case "getAccount":
+
+            $password = $_SESSION['token'];
+            $email = $_SESSION['email'];
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+
+            $response = getData('http://localhost/bachelor/api/account/'.$_POST['id'], $auth);
+            if($response->success){
+                echo $response->data;
+            }
+            // echo json_encode($response);
+            // echo $_POST['id'];
+        break;
+        case "editAccount":
+            unset($_POST['method']);
+            foreach ($_POST as $key => $value) {
+                $value = htmlentities($value);
+                $value = htmlspecialchars($value);
+            }
+            $args = new stdClass();
+            $args->name = $_POST['name'];
+            $args->surname = $_POST['surname'];
+            $args->email = $_POST['email'];
+
+            $password = $_SESSION['token'];
+            $email = $_SESSION['email'];
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+
+            // var_dump($_SESSION['uid']);
+            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'], $args, $auth);
+
+            if($response->success){
+                echo json_encode($response->data);
+            }
+
+        break;
     default:
         # code...
         break;
 }
 
 function PostRequest($host, $args, $authArgs = array()){
-
     $params = array(
             'key' => 'ec75c64b295ed40a799c924e663a807b',
             'json' => json_encode($args)
@@ -186,8 +228,41 @@ function GetRequest($host, $args, $authArgs = array()){
     return $response; 
 }
 
+function getData($path, $authArgs){
+    $email = $authArgs['email'];
+    $password = $authArgs['password'];
+    // var_dump($path);die();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_setopt($ch, CURLOPT_USERPWD, $email.":".$password);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
+    
+    $jsondata = curl_exec($ch);
+    curl_close($ch);
 
+    if($data = json_decode($jsondata)) {
+        $response = new stdClass();
+        $response->status = 200;
+        $response->success = true;
+        $response->data = json_encode($data);
+
+        return $response;
+    
+    }
+
+    $response = new stdClass();
+
+    $response->success = false;
+    $response->status = 500;
+    $response->statusText = 'Unknown API error';
+
+    return $response; 
+}
 
 
 

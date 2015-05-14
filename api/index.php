@@ -68,14 +68,16 @@ if($access){
                 case 'GET':
                     if(!empty($resource['1'])){
                             if(is_numeric($resource['1'])){
-                            $accountId = $resource['1'];
-                            $response = Db::getAccount($accountId);
-                            echo json_encode($response);
-                        }else{
-                            header("HTTP/1.0 400 Bad Request");
-                            echo "HTTP/1.0 400 Bad Request";
-                            die();
-                        }
+                                    $accountId = $resource['1'];
+                                    $response = Db::getAccount($accountId);
+                                    echo json_encode($response);
+                                }else{
+                                    $response = Security::checkLogin($username, $password);
+                                    echo json_encode($response);
+                                    // header("HTTP/1.0 400 Bad Request");
+                                    // echo "HTTP/1.0 400 Bad Request";
+                                    die();
+                                }
                     }else{
                         $params = json_decode($_GET['json']);
                         $response = Security::checkLogin($params->email, $params->password);
