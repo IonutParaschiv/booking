@@ -130,8 +130,6 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-
-            // var_dump($_SESSION['uid']);
             $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'], $args, $auth);
 
             if($response->success){
@@ -139,8 +137,117 @@ switch ($_POST['method']) {
             }
 
         break;
+        case "createCompany":
+            unset($_POST['method']);
+            $data = cleanData($_POST);
+
+            $args = new stdClass();
+            $args->name = $data['name'];
+            $args->email = $data['email'];
+            $args->address = $data['address'];
+            $args->opening_h = $data['openingH'];
+
+            $password = $_SESSION['token'];
+            $email = $_SESSION['email'];
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company', $args, $auth);
+            if($response->success){
+                echo json_encode($response);
+            }else{
+                $response = array(
+                    'success' =>false,
+                    'message' =>'There has been an issue'
+                    );
+                echo json_encode($response);
+            }
+        break;
+
+        case 'editCompany':
+            unset($_POST['method']);
+            $data = cleanData($_POST);
+
+            $args = new stdClass();
+            $args->name = $data['name'];
+            $args->email = $data['email'];
+            $args->address = $data['address'];
+            $args->opening_h = $data['openingH'];
+
+            $password = $_SESSION['token'];
+            $email = $_SESSION['email'];
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company/'.$data['companyId'], $args, $auth);
+            if($response->success){
+                echo json_encode($response);
+            }else{
+                $response = array(
+                    'success' =>false,
+                    'message' =>'There has been an issue'
+                    );
+                echo json_encode($response);
+            }
+
+            break;
+        case 'deleteCompany':
+            unset($_POST['method']);
+            $data = cleanData($_POST);
+
+            $password = $_SESSION['token'];
+            $email = $_SESSION['email'];
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $url = 'http://localhost/bachelor/api/account/'. $_SESSION['uid'].'/company/'.$data['companyId'];
+            $response = deleteEntry($url ,$auth);
+
+            echo $response;
+
+
+            break;
+        case 'getSingleCompany':
+            unset($_POST['method']);
+            $data = cleanData($_POST);
+            $email = $_SESSION['email'];
+            $password = $_SESSION['token'];
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $url = 'http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company/'.$data['companyid'];
+            $result = GetRequest($url ,array(), $auth);
+            if($result->success){
+                echo json_encode($result);
+            }
+            break;
+        case 'getAllCompanies':
+            unset($_POST['method']);
+
+            $email = $_SESSION['email'];
+            $password = $_SESSION['token'];
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $url = 'http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company';
+            $result = getData($url , $auth);
+            if($result->success){
+                echo json_encode($result);
+            }
+            break;
     default:
-        # code...
+        echo "Unknown service";
+        die;
         break;
 }
 
@@ -187,17 +294,19 @@ function PostRequest($host, $args, $authArgs = array()){
 }
 
 
-function GetRequest($host, $args, $authArgs = array()){
+function GetRequest($host, $args = array(), $authArgs = array()){
+
+
      $params = array(
             'key' => 'ec75c64b295ed40a799c924e663a807b',
             'json' => json_encode($args)
         );
     $email = $authArgs['email'];
     $password = $authArgs['password'];
-    $query_string = http_build_query($params);
-
+    $query_string = http_build_query($params);  
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $host."?".$query_string);
+    // curl_setopt($ch, CURLOPT_URL, $host);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, $email.":".$password);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -264,6 +373,47 @@ function getData($path, $authArgs){
     return $response; 
 }
 
+
+function deleteEntry($path, $authArgs){
+    $email = $authArgs['email'];
+    $password = $authArgs['password'];
+
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $path);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_setopt($ch, CURLOPT_USERPWD, $email.":".$password);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    
+    $jsondata = curl_exec($ch);
+    curl_close($ch);
+
+    if($jsondata) {
+        return $jsondata;
+    }
+
+    $response = new stdClass();
+
+    $response->success = false;
+    $response->status = 500;
+    $response->statusText = 'Unknown API error';
+
+    return $response; 
+}
+
+
+function cleanData($data = array()){
+    foreach ($data as $key => $value) {
+        $value = htmlentities($value);
+        $value = htmlspecialchars($value);
+    }
+    return $data;
+}
 
 
 

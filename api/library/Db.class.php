@@ -145,9 +145,8 @@ class Db{
         $stmt->bindParam(':email', $params->email);
         $stmt->bindParam(':address', $params->address);
         $stmt->bindParam(':opening_h', $params->opening_h);
-
+        // $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         $result = $stmt->execute();
-
         if($result){
             return self::getLatest('company');
         }else{
@@ -176,19 +175,29 @@ class Db{
         }
 
     }
-//UPDATE `bachelor`.`company` SET `name` = 'my new company again', `email` = 'me@my_newcompany.com', `address` = 'myaddress new' WHERE `company`.`id` = 2;
-    public function editCompany($company_id, $params){
+/**
+ * This function edits the company details
+ * @param  [type] $company_id [description]
+ * @param  [type] $accountid  [description]
+ * @param  [type] $params     [description]
+ * @return [type]             [description]
+ */
+    public function editCompany($company_id, $accountid, $params){
         $conn = self::conn();
 
-        $query = "UPDATE ". self::DATABASE_NAME. ".company SET name = :name, email = :email, address = :address, opening_h = :opening_h WHERE company.id = :company_id";
+        $fields = array();
+        foreach ($params as $key => $value) {
+            $set = $key." = '".$value."'";
+            array_push($fields, $set);
+        }
+        $fields = implode(', ', $fields);
+
+
+        $query = "UPDATE ". self::DATABASE_NAME. ".company SET ".$fields." WHERE company.id = :company_id AND account_id = :accountid";
         $stmt = $conn->prepare($query);
 
-        $stmt->bindParam(':name', $params->name);
-        $stmt->bindParam(':email', $params->email);
-        $stmt->bindParam(':address', $params->address);
-        $stmt->bindParam(':opening_h', $params->opening_h);
+        $stmt->bindParam(':accountid', intval($accountid));
         $stmt->bindParam(':company_id', intval($company_id));
-        // var_dump($query);die();
         $result = $stmt->execute();
 
         if($result){
@@ -197,7 +206,65 @@ class Db{
             return false;
         }
     }
+    public function deleteCompany($accountid, $companyid){
 
+        $conn = self::conn();
+
+        $query = "DELETE FROM " .self::DATABASE_NAME. ".company WHERE account_id = :accountid AND id = :company_id";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':accountid', intval($accountid));
+        $stmt->bindParam(':company_id', intval($companyid));
+
+        $result = $stmt->execute();
+
+        return $result;
+
+
+    }
+/**
+ * This function returns a the companies that are specific to one account
+ * @param  [int] $accountid [description]
+ * @return [Object]            [Object containing all companies for one account]
+ */
+    public function getAccountCompanies($accountid){
+        $conn = self::conn();
+
+        $query = "SELECT * FROM " .self::DATABASE_NAME. ".company WHERE account_id = :accountid";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':accountid', $accountid);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+    }
+
+    public function getSingleAccountCompany($accountid, $companyid){
+        //SELECT * FROM `company` WHERE id = 3 AND account_id = 1
+        $conn = self::conn();
+
+        $query = "SELECT * FROM ". self::DATABASE_NAME .".company WHERE id = :id AND account_id = :accid LIMIT 1";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':id', $companyid);
+        $stmt->bindParam(':accid', $accountid);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+    }
 /**
  * This function inserts a service into the database
  * @param  [array] $params [parameters to be added into the database]
@@ -232,8 +299,8 @@ class Db{
  * @param  [array] $params [parameters to be added in the staf table]
  * @return [object]         [in case of success returns the created staff object]
  */
-    public function createStaff($params){
-        if(empty($params['company_id'])){
+    public function createStaff($companyid, $params){
+        if(empty($companyid)){
             return array("status"=>400, "message"=>"missing parameter");
         }else{
             $conn = self::conn();
@@ -243,11 +310,11 @@ class Db{
             $stmt = $conn->prepare($query);
 
 
-            $stmt->bindParam(':company_id', $params['company_id']);
-            $stmt->bindParam(':name', $params['name']);
-            $stmt->bindParam(':surname', $params['surname']);
-            $stmt->bindParam(':email', $params['email']);
-            $stmt->bindParam(':available_h', $params['available_h']);
+            $stmt->bindParam(':company_id', $companyid);
+            $stmt->bindParam(':name', $params->name);
+            $stmt->bindParam(':surname', $params->surname);
+            $stmt->bindParam(':email', $params->email);
+            $stmt->bindParam(':available_h', $params->available_h);
 
             $result = $stmt->execute();
 
@@ -258,6 +325,54 @@ class Db{
             }
         }
     }
+/**
+ * This function edits specific staff member
+ * @param  [int] $staffId [staff identifier in database]
+ * @param  [object] $params  [paramenters to be edited]
+ * @return [object]          [edited staff member]
+ */
+    public function editStaff($staffId, $params){
+        $conn = self::conn();
+        //UPDATE `bachelor`.`staff` SET `name` = 'jaxie', `surname` = 'seymoursen', `email` = 'jax@seymourmeh.com', `available_h` = 'most of the times' WHERE `staff`.`id` = 2;
+        $fields = array();
+        foreach ($params as $key => $value) {
+            $set = $key." = '".$value."'";
+            array_push($fields, $set);
+        }
+        $fields = implode(', ', $fields);
+        $query = "UPDATE ". self::DATABASE_NAME .".staff SET ".$fields." WHERE staff.id = :staffId";
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':staffId', $staffId);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return self::getStaff($staffId);
+        }else{
+            return "Staff member could not be edited";
+        }
+    }
+    public function getStaff($staffId){
+        $conn = self::conn();
+        $query = "SELECT * FROM ". self::DATABASE_NAME . ".staff WHERE id = :staffId";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':staffId', $staffId);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+
+    }
+
+
+
 
     public function createBooking($params){
         $conn = self::conn();
