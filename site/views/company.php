@@ -59,7 +59,7 @@
         <script>company.getAll();</script>
         <form id="companyEditForm">
             <div class="form-group">
-              <select onchange="company.get()" class="" data-style="btn-primary" name="companyId" id="availableCompaniesSelect">
+              <select onchange="company.get()" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesSelect">
                 <option value="0">Nothing selected</option>
               </select>
             </div>
@@ -103,55 +103,69 @@
     </div>
     
 <!-- STAFF BLOCK -->
-    <div class="createStaff staffForm submenu_item">
-    <div class="userfeedback_company_create"></div>
-    dis will be the staff block
-      <!-- <form id="companyCreateForm">
-          <div class="form-group">
-            <label for="name">Company Name</label>
-            <input type="text" class="form-control" id="name" name="name"  placeholder=" Company name" value="my company">
-          </div>
-          <div class="form-group">
-          <label for="email">Company Email</label>
-            <input type="email" class="form-control" id="email" name="email"  placeholder="Company email" value="me@company.com">
-          </div>
-          <div class="form-group">
-            <label for="address">Company Email</label>
-            <input type="text" class="form-control" id="address" name="address"  placeholder="Company address" value="dis">
-          </div>
-          <div class="form-group">
-            <label for="address">Company Opening Hours</label>
-            <textarea class="form-control" id="openingH" name="openingH"  placeholder="Company Opening Hours"></textarea>
-          </div>
-          <br/>
-          <button type="submit" onclick="company.create(); return false;" class="btn btn-default button-wide">Save</button>
-      </form>
- -->    </div>
-<!-- Services BLOCK -->
-    <div class="createServices servicesForm submenu_item">
+    <div class="staffForm submenu_item hidden">
+    <div class="form-group">
+        <select onchange="service.getAll();" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesServiceSelect">
+          <option value="">Nothing selected</option>
+        </select>
+    </div>
+    <div class='createStaff staffForm'>
     <div class="userfeedback_staff_create"></div>
-    dis will be the services block
-      <!-- <form id="companyCreateForm">
+      <form id="staffCreateForm">
           <div class="form-group">
-            <label for="name">Company Name</label>
-            <input type="text" class="form-control" id="name" name="name"  placeholder=" Company name" value="my company">
+            <label for="name">Staff Name</label>
+            <input type="text" class="form-control" id="name" name="name"  placeholder=" Staff name" value="">
           </div>
           <div class="form-group">
-          <label for="email">Company Email</label>
-            <input type="email" class="form-control" id="email" name="email"  placeholder="Company email" value="me@company.com">
+            <label for="name">Staff Surname</label>
+            <input type="text" class="form-control" id="surname" name="surname"  placeholder=" Staff surname" value="">
           </div>
           <div class="form-group">
-            <label for="address">Company Email</label>
-            <input type="text" class="form-control" id="address" name="address"  placeholder="Company address" value="dis">
+          <label for="email">Staff Email</label>
+            <input type="email" class="form-control" id="email" name="email"  placeholder="Staff email" value="">
           </div>
-          <div class="form-group">
-            <label for="address">Company Opening Hours</label>
-            <textarea class="form-control" id="openingH" name="openingH"  placeholder="Company Opening Hours"></textarea>
+          <div class="form-group" id="availableServices">
+          <label for="email">Services Available</label>
+            
           </div>
           <br/>
-          <button type="submit" onclick="company.create(); return false;" class="btn btn-default button-wide">Save</button>
+          <button type="submit" onclick="" class="btn btn-default button-wide">Save</button>
       </form>
- -->    </div>
+    </div>
+    </div>
+<!-- Services BLOCK -->
+    
+    <div class="createService servicesForm submenu_item hidden">
+    <div class="form-group">
+        <select onchange="service.getAll();" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesServiceSelect">
+          <option value="">Nothing selected</option>
+        </select>
+    </div>
+    <div class="servicesContainer">
+      <ul id='servicesList'>
+        
+      </ul>
+    </div>
+    <div class="createServices servicesForm">
+      <div class="userfeedback_service_create"></div>
+        <form id="serviceCreateForm">
+            <div class="form-group">
+              <input type="text" class="form-control" id="name" name="name"  placeholder="Service name" value="Service #1">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="price" name="price"  placeholder="Price" value="20">
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" id="description" name="description"  placeholder="Service Description">This is an awesome service</textarea>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="duration" name="duration"  placeholder="Duration" value="120">
+            </div>
+            <br/>
+            <button type="submit" onclick="service.create(); return false;" class="btn btn-default button-wide">Save</button>
+        </form>
+      </div>
+    </div>
   </div>
 
     <script type="text/javascript" src="/bachelor/site/inc/lib/js/subnav.js"></script>

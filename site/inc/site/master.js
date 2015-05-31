@@ -31,7 +31,6 @@ login: function(){
       data: args,
       success: function(data){
         data = JSON.parse(data)
-        console.dir(data);
         if(!data.success){
             feedback.alert('.userfeedback_login', data.message);
             return false
@@ -68,7 +67,6 @@ edit: function(){
       url: "/bachelor/site/inc/lib/php/RequestHandler.php",
       data: args,
       success: function(data){
-        console.dir(JSON.parse(data));
       },
     });
 }
@@ -182,8 +180,8 @@ var company = {
                 for(var i = 0; i<companies.length; i++){
                   html += '<option value="'+companies[i].id+'">'+companies[i].name+'</option>'
                 }
-                $('#availableCompaniesSelect').empty();
-                $('#availableCompaniesSelect').append(html);
+                $('.availableCompaniesSelect').empty();
+                $('.availableCompaniesSelect').append(html);
             }
           
         }
@@ -194,7 +192,76 @@ var company = {
 
 };
 
+var service = {
 
+  create: function(){
+    var companyId = $('#availableCompaniesServiceSelect').val();
+    var args = "method=createService&companyId="+companyId+'&'+$('#serviceCreateForm').serialize();
+    console.log(args);
+    $.ajax({
+      type: "POST",
+      url: "/bachelor/site/inc/lib/php/RequestHandler.php",
+      data: args,
+      success: function(data){
+        data = JSON.parse(data);
+        console.dir(data);
+        if(!data.success){
+          feedback.alert('.userfeedback_service_create', data.message);
+        }else{
+          $('#serviceCreateForm').hide();
+          feedback.success('.userfeedback_service_create', 'Your service has been created');
+
+        }
+      }
+    })
+  },
+
+
+  delete: function(){
+    console.log('delete');
+  },
+
+
+  edit: function(){
+    console.log('edit');
+  },
+
+  getAll: function(){
+
+    var companyId = $('#availableCompaniesServiceSelect').val();
+    var args = "method=getAllServices&company_id="+companyId;
+    $.ajax({
+      type:"POST",
+      url: "/bachelor/site/inc/lib/php/RequestHandler.php",
+      data: args,
+      success: function(data){
+        data = JSON.parse(data);
+        if(data.success){
+          var services = JSON.parse(data.data);
+          var html = '';
+          var checkboxes = '';
+          for(var i = 0; i< services.length; i++){
+            html = html + '<li> <a href="#">'+services[i].name+'</a> </li>';
+            checkboxes =checkboxes + '<div class="checkbox"><label><input type="checkbox" value="'+services[i].id+'">'+services[i].name+'</label></div>';
+
+          }
+          $('#servicesList').html(html);
+          $('#availableServices').html(checkboxes);
+          console.dir(services);
+                    
+        }
+      }
+    });
+  },
+
+
+  get: function(){
+    console.log('get single');
+  }
+
+
+
+}
 $(document).ready(function(){
 
 });

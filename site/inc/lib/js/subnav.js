@@ -7,5 +7,4 @@ $('.subnav_node').click(function(){
     $('.stackedNav li').removeClass('active');
     node.parent('li').addClass('active');
     $('.'+target).removeClass('hidden').addClass('visible');
-    console.log(target);
 });

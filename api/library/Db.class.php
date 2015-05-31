@@ -270,22 +270,20 @@ class Db{
  * @param  [array] $params [parameters to be added into the database]
  * @return [object]         [in case of success it returns an object of the created service]
  */
-    public function createService($params){
+    public function createService($companyid, $params){
         $conn = self::conn();
-
         $query = "INSERT INTO ". self::DATABASE_NAME. ".service (id, company_id, name, price, description, duration)
                     VALUES ('', :company_id, :name, :price, :description, :duration)";
 
         $stmt = $conn->prepare($query);
 
-        $stmt->bindParam(':company_id', $params['company_id']);
-        $stmt->bindParam(':name', $params['name']);
-        $stmt->bindParam(':price', $params['price']);
-        $stmt->bindParam(':description', $params['description']);
-        $stmt->bindParam(':duration', $params['duration']);
+        $stmt->bindParam(':company_id', $companyid);
+        $stmt->bindParam(':name', $params->name);
+        $stmt->bindParam(':price', $params->price);
+        $stmt->bindParam(':description', $params->description);
+        $stmt->bindParam(':duration', $params->duration);
 
         $result = $stmt->execute();
-
         if($result){
             return self::getLatest('service');
         }else{
@@ -293,6 +291,22 @@ class Db{
         }
     }
 
+    public function getCompanyServices($companyId){
+        $conn = self::conn();
+
+        $query = "SELECT * FROM " .self::DATABASE_NAME. ".service WHERE company_id = :companyid";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':companyid', $companyId);
+        
+        $result = $stmt->execute();
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+    }
 
 /**
  * This function inserts a staff member into the database

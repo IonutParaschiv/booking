@@ -245,6 +245,64 @@ switch ($_POST['method']) {
                 echo json_encode($result);
             }
             break;
+        case 'createService':
+            if(empty($_POST['companyId']) || $_POST['companyId'] == 0){
+                $json = array(
+                        'success' => false,
+                        'message' => 'Please select a company first'
+                    );
+                echo json_encode($json);die();
+            }
+
+
+            unset($_POST['method']);
+
+            $email = $_SESSION['email'];
+            $password = $_SESSION['token'];
+            $data = cleanData($_POST);
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+
+            $args = new stdClass();
+            $args->name = $data['name'];
+            $args->price = $data['price'];
+            $args->description = $data['description'];
+            $args->duration = $data['duration'];
+
+            $url = 'http://localhost/bachelor/api/company/'.$data['companyId'].'/service';
+
+            $result = PostRequest($url, $args, $auth);
+            if($result->success){
+                echo json_encode($result);
+            }else{
+                $json = array(
+                        'success' => false,
+                        'message' => 'There has been an issue'
+                    );
+                echo json_encode($json);die();
+            }
+            break;
+        case 'getAllServices':
+            unset($_POST['method']);
+            $email = $_SESSION['email'];
+            $password = $_SESSION['token'];
+
+            $data = cleanData($_POST);
+
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $url = 'http://localhost/bachelor/api/company/'.$data['company_id'].'/service';
+            $result = getData($url , $auth);
+            if($result->success){
+                echo json_encode($result);
+            }
+            break;
     default:
         echo "Unknown service";
         die;
@@ -354,6 +412,7 @@ function getData($path, $authArgs){
     $jsondata = curl_exec($ch);
     curl_close($ch);
 
+    // var_dump($jsondata);die();
     if($data = json_decode($jsondata)) {
         $response = new stdClass();
         $response->status = 200;

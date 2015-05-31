@@ -144,13 +144,19 @@ if($access){
              switch ($method) {
                 case 'POST':
                     $key = $_POST['key'];
-                    if(!empty($resource['1'])){
+                    if(!empty($resource['1']) && is_numeric($resource['1'])){
                         if(!empty($resource['2']) && $resource['2'] == 'staff'){
                             if(!empty($resource['3']) && is_numeric($resource['3'])){
                                 $response = Db::editStaff($resource['3'], json_decode($_POST['json']));
                             }else{
                                  $response = Db::createStaff($resource['1'], json_decode($_POST['json']));
                             }
+                        }elseif(!empty($resource['2']) && $resource['2'] == 'service'){
+                            if(!empty($resource['3']) && is_numeric($resource['3'])){
+                            }else{
+                                $response = Db::createService($resource['1'], json_decode($_POST['json']));
+                            }
+                            
                         }else{
                             $response = Db::editCompany($resource['1'], json_decode($_POST['json']) );
                         }
@@ -167,13 +173,17 @@ if($access){
                     break;
                 case 'GET':
 
-                    if(!empty($resource['1'])){
-                        $response = Db::getCompany( intval( $resource['1']) );
+                    if(!empty($resource['1']) && is_numeric($resource['1'])){
+                        if(!empty($resource['2']) && $resource['2'] == 'service'){
+                            $response = Db::getCompanyServices($resource['1']);
+                        }else{
+                            $response = Db::getCompany( intval( $resource['1']) );
+                        }
                         if($response){
                              echo json_encode($response);
                         }else{
-                            echo 'HTTP/1.1 404 Not Found';
-                            header('HTTP/1.1 404 Not Found');
+                            echo 'HTTP/1.1 404 Not Found here';
+                            header('HTTP/1.1 404 Not Found here');
                         }
                        
                     }else{

@@ -125,7 +125,9 @@
     margin-top:-164px;
     height: 480px;
 }
-.createCompany{
+.createCompany,
+.createStaff,
+.createServices{
     width:30%;
     outline: 1px solid #efefef;
     padding: 20px;
@@ -146,4 +148,12 @@
     margin-top:20px;
     height: 90%;
 }
-
+.servicesContainer{
+    position: absolute;
+}
+.servicesContainer ul{
+    list-style-type: none; 
+}
+.servicesContainer ul li{
+    padding:5px 0;
+}
