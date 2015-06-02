@@ -2,6 +2,7 @@
 if(!isset($_SESSION)){
     session_start(); 
 }
+define('API_URL', 'http://localhost/bachelor');
 switch ($_POST['method']) {
     case 'register':
         unset($_POST['method']);
@@ -29,7 +30,7 @@ switch ($_POST['method']) {
             'password' => 'ionut280590'
             );
 
-        $result = PostRequest('http://localhost/bachelor/api/account', $args, $auth);
+        $result = PostRequest('/api/account', $args, $auth);
         if($result->success){
             echo json_encode($result);
         }
@@ -59,7 +60,7 @@ switch ($_POST['method']) {
             "password" => $args->password
             );
 
-        $result = GetRequest('http://localhost/bachelor/api/account/', $args, $auth);
+        $result = GetRequest(API_URL.'/api/account/', $args, $auth);
 
         if($result->success){
             $responseJson = json_decode($result->data);
@@ -106,7 +107,7 @@ switch ($_POST['method']) {
                 'password' => $password
                 );
 
-            $response = getData('http://localhost/bachelor/api/account/'.$_POST['id'], $auth);
+            $response = getData(API_URL.'api/account/'.$_POST['id'], $auth);
             if($response->success){
                 echo $response->data;
             }
@@ -130,7 +131,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'], $args, $auth);
+            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'], $args, $auth);
 
             if($response->success){
                 echo json_encode($response->data);
@@ -154,7 +155,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company', $args, $auth);
+            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'].'/company', $args, $auth);
             if($response->success){
                 echo json_encode($response);
             }else{
@@ -183,7 +184,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest('http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company/'.$data['companyId'], $args, $auth);
+            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'].'/company/'.$data['companyId'], $args, $auth);
             if($response->success){
                 echo json_encode($response);
             }else{
@@ -206,7 +207,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = 'http://localhost/bachelor/api/account/'. $_SESSION['uid'].'/company/'.$data['companyId'];
+            $url = API_URL.'/api/account/'. $_SESSION['uid'].'/company/'.$data['companyId'];
             $response = deleteEntry($url ,$auth);
 
             echo $response;
@@ -223,7 +224,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = 'http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company/'.$data['companyid'];
+            $url = API_URL.'/api/account/'.$_SESSION['uid'].'/company/'.$data['companyid'];
             $result = GetRequest($url ,array(), $auth);
             if($result->success){
                 echo json_encode($result);
@@ -239,7 +240,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = 'http://localhost/bachelor/api/account/'.$_SESSION['uid'].'/company';
+            $url = API_URL.'/api/account/'.$_SESSION['uid'].'/company';
             $result = getData($url , $auth);
             if($result->success){
                 echo json_encode($result);
@@ -272,7 +273,46 @@ switch ($_POST['method']) {
             $args->description = $data['description'];
             $args->duration = $data['duration'];
 
-            $url = 'http://localhost/bachelor/api/company/'.$data['companyId'].'/service';
+            $url = API_URL.'/api/company/'.$data['companyId'].'/service';
+
+            $result = PostRequest($url, $args, $auth);
+            if($result->success){
+                echo json_encode($result);
+            }else{
+                $json = array(
+                        'success' => false,
+                        'message' => 'There has been an issue'
+                    );
+                echo json_encode($json);die();
+            }
+            break;
+        case 'createStaff':
+            if(empty($_POST['companyId']) || $_POST['companyId'] == 0){
+                $json = array(
+                        'success' => false,
+                        'message' => 'Please select a company first'
+                    );
+                echo json_encode($json);die();
+            }
+
+
+            unset($_POST['method']);
+
+            $email = $_SESSION['email'];
+            $password = $_SESSION['token'];
+            $data = $_POST;
+
+            $auth = array(
+                'email' => $email,
+                'password' => $password
+                );
+            $args = new stdClass();
+            $args->name = $data['name'];
+            $args->surname = $data['surname'];
+            $args->email = $data['email'];
+            $args->services = $data['services'];
+
+            $url = API_URL.'/api/company/'.$data['companyId'].'/staff';
 
             $result = PostRequest($url, $args, $auth);
             if($result->success){
@@ -297,7 +337,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = 'http://localhost/bachelor/api/company/'.$data['company_id'].'/service';
+            $url = API_URL.'/api/company/'.$data['company_id'].'/service';
             $result = getData($url , $auth);
             if($result->success){
                 echo json_encode($result);

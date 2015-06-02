@@ -191,7 +191,30 @@ var company = {
 
 
 };
+var staff = {
+  
+  create: function(){
+    var companyId = $('#availableCompaniesStaffSelect').val();
+    var args = "method=createStaff&companyId="+companyId+'&'+$('#staffCreateForm').serialize();
+    console.log(args);
+    $.ajax({
+      type: "POST",
+      url: "/bachelor/site/inc/lib/php/RequestHandler.php",
+      data: args,
+      success: function(data){
+        data = JSON.parse(data);
+        console.dir(data);
+        if(!data.success){
+          feedback.alert('.userfeedback_staff_create', data.message);
+        }else{
+          $('#serviceCreateForm').hide();
+          feedback.success('.userfeedback_staff_create', 'Your staff member has been created');
 
+        }
+      }
+    })
+  },
+};
 var service = {
 
   create: function(){
@@ -226,9 +249,9 @@ var service = {
     console.log('edit');
   },
 
-  getAll: function(){
+  getAll: function(id){
 
-    var companyId = $('#availableCompaniesServiceSelect').val();
+    var companyId = $('#'+id).val();
     var args = "method=getAllServices&company_id="+companyId;
     $.ajax({
       type:"POST",
@@ -242,7 +265,7 @@ var service = {
           var checkboxes = '';
           for(var i = 0; i< services.length; i++){
             html = html + '<li> <a href="#">'+services[i].name+'</a> </li>';
-            checkboxes =checkboxes + '<div class="checkbox"><label><input type="checkbox" value="'+services[i].id+'">'+services[i].name+'</label></div>';
+            checkboxes =checkboxes + '<div class="checkbox"><label><input type="checkbox" name="services[]" value="'+services[i].id+'">'+services[i].name+'</label></div>';
 
           }
           $('#servicesList').html(html);

@@ -176,14 +176,19 @@ if($access){
                     if(!empty($resource['1']) && is_numeric($resource['1'])){
                         if(!empty($resource['2']) && $resource['2'] == 'service'){
                             $response = Db::getCompanyServices($resource['1']);
-                        }else{
+                        }elseif(!empty($resource['2']) && $resource['2'] == 'staff'){
+                            if(is_numeric($resource['3'])){
+                                $response = Db::getSingleStaff($resource['3']);
+                            }
+                        }
+                        else{
                             $response = Db::getCompany( intval( $resource['1']) );
                         }
                         if($response){
                              echo json_encode($response);
                         }else{
-                            echo 'HTTP/1.1 404 Not Found here';
-                            header('HTTP/1.1 404 Not Found here');
+                            echo 'HTTP/1.1 404 Not Found ';
+                            header('HTTP/1.1 404 Not Found');
                         }
                        
                     }else{

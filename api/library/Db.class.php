@@ -307,7 +307,26 @@ class Db{
             return false;
         }
     }
+    public function getServicesById($ids = array()){
+        $conn = self::conn();
+        $services = array();
+        foreach ($ids as $id) {
+            $query = "SELECT * FROM " .self::DATABASE_NAME. ".service WHERE id = :id";
+            $stmt = $conn->prepare($query);
 
+            $stmt->bindParam(':id', $id);
+
+            $result = $stmt->execute();
+
+            if($result){
+                array_push($services, $stmt->fetchAll(PDO::FETCH_ASSOC));
+            }else{
+                return $services;
+            }
+
+        }
+            return $services;
+    }
 /**
  * This function inserts a staff member into the database
  * @param  [array] $params [parameters to be added in the staf table]
@@ -318,17 +337,18 @@ class Db{
             return array("status"=>400, "message"=>"missing parameter");
         }else{
             $conn = self::conn();
-            $query = "INSERT INTO ". self::DATABASE_NAME .".staff ( id, company_id, name, surname, email, available_h ) 
-            VALUES ( '', :company_id, :name, :surname, :email, :available_h )";
+            $query = "INSERT INTO ". self::DATABASE_NAME .".staff ( id, company_id, name, surname, email, services ) 
+            VALUES ( '', :company_id, :name, :surname, :email, :services )";
 
             $stmt = $conn->prepare($query);
 
+            $services = self::getServicesById($params->services);
 
             $stmt->bindParam(':company_id', $companyid);
             $stmt->bindParam(':name', $params->name);
             $stmt->bindParam(':surname', $params->surname);
             $stmt->bindParam(':email', $params->email);
-            $stmt->bindParam(':available_h', $params->available_h);
+            $stmt->bindParam(':services', json_encode($services));
 
             $result = $stmt->execute();
 
@@ -337,6 +357,22 @@ class Db{
             }else{
                 return "Staff member could not be created";
             }
+        }
+    }
+    public function getSingleStaff($staffId){
+        $conn = self::conn();
+        $query = "SELECT * FROM " .self::DATABASE_NAME. ".staff WHERE id = :id";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':id', $staffId);
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
         }
     }
 /**

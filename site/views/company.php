@@ -105,7 +105,7 @@
 <!-- STAFF BLOCK -->
     <div class="staffForm submenu_item hidden">
     <div class="form-group">
-        <select onchange="service.getAll();" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesServiceSelect">
+        <select onchange="service.getAll('availableCompaniesStaffSelect');" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesStaffSelect">
           <option value="">Nothing selected</option>
         </select>
     </div>
@@ -113,23 +113,20 @@
     <div class="userfeedback_staff_create"></div>
       <form id="staffCreateForm">
           <div class="form-group">
-            <label for="name">Staff Name</label>
-            <input type="text" class="form-control" id="name" name="name"  placeholder=" Staff name" value="">
+            <input type="text" class="form-control" id="name" name="name"  placeholder=" Staff name" value="Jax">
           </div>
           <div class="form-group">
-            <label for="name">Staff Surname</label>
-            <input type="text" class="form-control" id="surname" name="surname"  placeholder=" Staff surname" value="">
+            <input type="text" class="form-control" id="surname" name="surname"  placeholder=" Staff surname" value="Seymour">
           </div>
           <div class="form-group">
-          <label for="email">Staff Email</label>
-            <input type="email" class="form-control" id="email" name="email"  placeholder="Staff email" value="">
+            <input type="email" class="form-control" id="email" name="email"  placeholder="Staff email" value="jax@seymour.com">
           </div>
           <div class="form-group" id="availableServices">
           <label for="email">Services Available</label>
             
           </div>
           <br/>
-          <button type="submit" onclick="" class="btn btn-default button-wide">Save</button>
+          <button type="submit" onclick="staff.create();return false;" class="btn btn-default button-wide">Save</button>
       </form>
     </div>
     </div>
@@ -137,7 +134,7 @@
     
     <div class="createService servicesForm submenu_item hidden">
     <div class="form-group">
-        <select onchange="service.getAll();" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesServiceSelect">
+        <select onchange="service.getAll('availableCompaniesServiceSelect');" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesServiceSelect">
           <option value="">Nothing selected</option>
         </select>
     </div>
