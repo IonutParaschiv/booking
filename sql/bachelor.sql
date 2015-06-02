@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 12, 2015 at 04:02 PM
+-- Generation Time: Jun 02, 2015 at 06:29 PM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.11
 
@@ -39,14 +39,15 @@ CREATE TABLE IF NOT EXISTS `account` (
   `parent` int(16) NOT NULL,
   `master` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `account`
 --
 
 INSERT INTO `account` (`id`, `name`, `surname`, `email`, `password`, `join_date`, `salt`, `token`, `apiKey`, `parent`, `master`) VALUES
-(1, 'Ionut', 'Paraschiv', 'ionut@htd.ro', 'de6d7af3ebb5c6cc2585d000a909994921f459f44b53461bf679af7f2f46e233', '2015-05-12 14:31:49', 'kXOtHe9LRGnDuzQp', '86e6ba8473b08ff258b23de7eac29ccb', '86e6ba8473b08ff258b23de7eac29ccb', 1, 0);
+(1, 'Ionut', 'Paraschiv', 'ionut@htd.ro', 'de6d7af3ebb5c6cc2585d000a909994921f459f44b53461bf679af7f2f46e233', '2015-05-12 14:31:49', 'kXOtHe9LRGnDuzQp', '86e6ba8473b08ff258b23de7eac29ccb', '86e6ba8473b08ff258b23de7eac29ccb', 1, 0),
+(2, 'Jax', 'Seymour', 'me@mynewcompany.com', '838aa9387e7208d8eb54d07dbeb8eff4bcb282e4ac772c306d8f88dc7882e6c0', '2015-05-13 13:08:04', 'DbYWJOUq6zvmhJ2K', '4afa43a7c605ba02361fe214fdd63782', '4afa43a7c605ba02361fe214fdd63782', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -87,16 +88,14 @@ CREATE TABLE IF NOT EXISTS `company` (
   `address` text NOT NULL,
   `opening_h` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=21 ;
 
 --
 -- Dumping data for table `company`
 --
 
 INSERT INTO `company` (`id`, `account_id`, `name`, `email`, `address`, `opening_h`) VALUES
-(1, 1, 'Some newly edited company', 'me@mynewcompany.com', 'myaddress', 'allday'),
-(2, 2, 'Some newly edited company', 'me@mynewcompany.com', 'myaddress', 'allday'),
-(3, 2, 'Some newly edited company', 'me@mynewcompany.com', 'myaddress', 'allday');
+(20, 1, 'Company #1', 'company@dummy.com', 'Dummy street nr 10', 'mo-fry : 09:00 - 18:00');
 
 -- --------------------------------------------------------
 
@@ -134,21 +133,23 @@ INSERT INTO `master_account` (`id`, `name`, `surname`, `email`, `password`, `joi
 --
 
 CREATE TABLE IF NOT EXISTS `service` (
-  `id` int(16) NOT NULL,
+  `id` int(16) NOT NULL AUTO_INCREMENT,
   `company_id` int(16) NOT NULL,
   `name` varchar(32) NOT NULL,
   `price` int(32) NOT NULL,
   `description` text NOT NULL,
   `duration` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `service`
 --
 
 INSERT INTO `service` (`id`, `company_id`, `name`, `price`, `description`, `duration`) VALUES
-(0, 1, 'service name', 200, 'it is awesome', 100);
+(1, 20, 'Service #1', 20, 'This is an awesome service', 120),
+(2, 20, 'Service #2', 40, 'This is an awesome service number 2', 120),
+(3, 20, 'Service #1', 20, 'This is an awesome service', 120);
 
 -- --------------------------------------------------------
 
@@ -162,9 +163,17 @@ CREATE TABLE IF NOT EXISTS `staff` (
   `name` varchar(32) NOT NULL,
   `surname` varchar(32) NOT NULL,
   `email` varchar(32) NOT NULL,
-  `available_h` text NOT NULL,
+  `services` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `staff`
+--
+
+INSERT INTO `staff` (`id`, `company_id`, `name`, `surname`, `email`, `services`) VALUES
+(1, 20, 'Jax', 'Seymour', 'jax@seymour.com', '[[{"id":"2","company_id":"20","name":"Service #2","price":"40","description":"This is an awesome service number 2","duration":"120"}],[{"id":"3","company_id":"20","name":"Service #1","price":"20","description":"This is an awesome service","duration":"120"}]]'),
+(2, 20, 'Jax', 'Seymour', 'jax@seymour.com', '[[{"id":"2","company_id":"20","name":"Service #2","price":"40","description":"This is an awesome service number 2","duration":"120"}],[{"id":"3","company_id":"20","name":"Service #1","price":"20","description":"This is an awesome service","duration":"120"}]]');
 
 -- --------------------------------------------------------
 
