@@ -327,6 +327,48 @@ class Db{
         }
             return $services;
     }
+
+    public function getSingleService($id){
+        $conn = self::conn();
+
+        $query = "SELECT * FROM ".self::DATABASE_NAME.".service WHERE id = :id";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(":id", $id);
+
+        $result = $stmt->execute();
+
+        if($result){
+            $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $staffArr = array();
+            $servStaffQ = "SELECT * FROM ".self::DATABASE_NAME. ".staffService WHERE service_id = :id";
+            $servStaff = $conn->prepare($servStaffQ);
+            $servStaff->bindParam(':id', $id);
+            $rows = $servStaff->execute();
+            if($rows){
+                $rowsArr = $servStaff->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($rowsArr as $index => $value) {
+                    $staffId = $value['staff_id'];
+                    $staffQ = "SELECT * FROM " .self::DATABASE_NAME. ".staff WHERE id = :id";
+                    $staff = $conn->prepare($staffQ);
+                    $staff->bindParam(':id', $staffId);
+
+                    $staffRow = $staff->execute();
+                    if($staffRow){
+                        $staffEnt = $staff->fetchAll(PDO::FETCH_ASSOC);
+                        unset($staffEnt['0']['services']);
+                        array_push($staffArr, $staffEnt['0']);
+                    }
+                   
+                }
+                $response['0']['staff'] = $staffArr;
+                
+                return $response[0];
+            }
+        }
+        return false;
+    }
 /**
  * This function inserts a staff member into the database
  * @param  [array] $params [parameters to be added in the staf table]
@@ -350,10 +392,24 @@ class Db{
             $stmt->bindParam(':email', $params->email);
             $stmt->bindParam(':services', json_encode($services));
 
+
             $result = $stmt->execute();
 
             if($result){
-                return self::getLatest('staff');
+                $newStaff = self::getLatest('staff');
+                $newStaffId = $newStaff['0']['id'];
+                foreach ($params->services as $index => $serviceId) {
+                    $insertQuery = "INSERT INTO ". self::DATABASE_NAME . ".staffService (id, staff_id, service_id)
+                    VALUES ('', :staffId, :serviceId)";
+
+                    $insert = $conn->prepare($insertQuery);
+
+                    $insert->bindParam(':staffId', $newStaffId);
+                    $insert->bindParam(':serviceId', $serviceId);
+
+                    $row = $insert->execute();
+                }
+                return $newStaff;
             }else{
                 return "Staff member could not be created";
             }

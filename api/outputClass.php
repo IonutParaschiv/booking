@@ -6,11 +6,11 @@ class outputClass {
 
     public function __construct() {
         $array = array(
-            "company_id" => 1,
+            "company_id" => 20,
             "name" => 'Jax',
             "surname" => 'Seymour',
             "email" => 'jax@seymour.com',
-            "available_h" => '1234',
+            "services" => array(1,2),
             );
 
         $company = array(
@@ -46,9 +46,10 @@ class outputClass {
         $account->surname = 'master';
         $account->email = 'second@api.com';
         $account->password = 'ionut280590';
+        var_dump(json_encode($array));die();
          // var_dump(Db::createAccount($account, true, 'jaxierulestheblock'));
          // var_dump(Db::createAccount($account));
-        var_dump(Db::getAccount('1'));
+        // var_dump(Db::getAccount('1'));
         //var_dump(Security::checkLogin('ionut@htd.ro', '1234')); 
         
     }
