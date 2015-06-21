@@ -1,5 +1,6 @@
 <?php
 class Db{
+
     const DATABASE_NAME = "bachelor";
     const SHARED_SECRET = "jaxierulestheblock";
 /**
@@ -267,16 +268,17 @@ class Db{
     }
 /**
  * This function inserts a service into the database
- * @param  [array] $params [parameters to be added into the database]
+ * @param  [object] $params [parameters to be added into the database]
  * @return [object]         [in case of success it returns an object of the created service]
  */
     public function createService($companyid, $params){
+
         $conn = self::conn();
+        
         $query = "INSERT INTO ". self::DATABASE_NAME. ".service (id, company_id, name, price, description, duration)
                     VALUES ('', :company_id, :name, :price, :description, :duration)";
 
         $stmt = $conn->prepare($query);
-
         $stmt->bindParam(':company_id', $companyid);
         $stmt->bindParam(':name', $params->name);
         $stmt->bindParam(':price', $params->price);
@@ -284,6 +286,7 @@ class Db{
         $stmt->bindParam(':duration', $params->duration);
 
         $result = $stmt->execute();
+
         if($result){
             return self::getLatest('service');
         }else{
