@@ -1,6 +1,5 @@
 <?php 
 require_once('config/autoloader.php');
-// var_dump($_POST);die();
 $access = false;
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
         header('WWW-Authenticate: Basic realm="My Realm"');
@@ -55,7 +54,7 @@ if($access){
     $paths = $_SERVER['REQUEST_URI'];
     $method = $_SERVER['REQUEST_METHOD'];
     $resource = explode('/', $paths);
-    unset($resource['0'], $resource['1'], $resource['2']);
+    unset($resource['0'], $resource['1'], $resource['2'], $resource['3']);
     $resource = array_values($resource);
 
     switch ($resource['0']) {
