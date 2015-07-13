@@ -1,7 +1,7 @@
 <?php
 //define class path and class child folders
 define("classPath","");
-define("class_dir_array", serialize (array ("User")));
+define("class_dir_array", serialize (array ("user", 'company', 'library')));
 
 spl_autoload_register(function($class_name) 
     {

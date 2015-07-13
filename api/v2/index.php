@@ -3,12 +3,33 @@ require_once('utils/autoloader.php');
 
 //by default, all requests are invalid
 $valid = false;
-
+//by default, nobody has access granted
+$access = false;
 //get the request method
 $method = $_SERVER['REQUEST_METHOD'];
 //Get the raw request uri
 $rawPath = $_SERVER['REQUEST_URI'];
+//define request body
+$json = array();
+
+
+
+#start authentication
+
+if (!isset($_SERVER['PHP_AUTH_USER'])) {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo 'This page requires authenthication';
+        exit;
+    }else {
+        $username = $_SERVER['PHP_AUTH_USER'];
+        $password = $_SERVER['PHP_AUTH_PW'];
+}
+
+
+
 //transform it into an array and unset unwanted routes
+
 $path = explode('/', $rawPath);
 unset(
     $path['0'],
@@ -20,7 +41,7 @@ unset(
 $path = array_values($path);
 
 
-
+#set arrays of accepted methods and paths
 $accepted_paths = array(
     'user',
     'company'
@@ -31,6 +52,19 @@ $accepted_methods = array(
     'DELETE',
     'PUT'
     );
+
+
+// var_dump($method);die();
+#TO DO request body manipulation
+if(isset($_POST['json'])){
+    var_dump("here");
+    $json = json_decode($_POST['json']);
+}elseif(isset($_PUT['json'])){
+    var_dump("in patch");
+    parse_str(file_get_contents("php://input"),$post_vars);
+    var_dump($post_vars);
+    $json = json_decode($_PUT['json']);
+}
 
 if(in_array($method, $accepted_methods) &&
    in_array($path['0'], $accepted_paths)){
@@ -44,7 +78,7 @@ if($valid){
     unset($path['0']);
     $path = array_values($path);
 
-    $response = $class->route($method, $path);
+    $response = $class->route($method, $path, $json);
     
 }else{
     header('HTTP/1.0 501 Not implemented');

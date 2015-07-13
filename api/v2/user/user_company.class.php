@@ -3,7 +3,7 @@
  * This class handles the company calls
  */
 
-class company{
+class user_company{
 
     public function create($params){
         return 'this is create company';

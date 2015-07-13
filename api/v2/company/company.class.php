@@ -3,7 +3,7 @@
  * This class handles the user calls
  */
 
-class user{
+class company{
 
     /**
      * This function will route the request to the desired class
@@ -11,20 +11,21 @@ class user{
      * @param  array  $paths  [The http request uri]
      * @return [object]         
      */
-    public function route($method='', $paths = array(), $params = array()){
+
+    public function route($method='', $paths = array()){
 
         $identifier = !empty($paths['0']) ? $paths['0'] : '';
         //format the response
         $response = '';
-        //the default class will be user
-        $class = 'user';
-
+        //the default class will be company
+        $class = 'company';
+                
         #check if the paths are empty. if they are, it is a call to master endpoint
         if(empty($paths)){
-            $class = 'user';
+            $class = 'company';
 
         }elseif(!empty($paths['0']) && !is_numeric($paths['0'])){#check if the first parameter is numeric. if it's not, it is an invalid call
-            echo 'HTTP/1.1 404 Not Found';
+            echo 'HTTP/1.1 404 Not Found from 27';
             header('HTTP/1.1 404 Not Found');
             die();
         }elseif(!empty($paths['1'])){
@@ -44,16 +45,15 @@ class user{
                 $response = $class::get($identifier);
                 break;
             case 'POST':
-                $response = $class::create($params);
+                $response = $class::create('string');
                 break;
             case 'PUT':
-            var_dump($params);
                 if(empty($identifier) || !is_numeric($identifier)){
                     echo 'HTTP/1.1 404 Not Found';
                     header('HTTP/1.1 404 Not Found');
                     die();
                 }
-                $response = $class::edit($params, $identifier);
+                $response = $class::edit('string');
                 break;
             case 'DELETE':
                 if(empty($identifier) || !is_numeric($identifier)){
@@ -72,42 +72,19 @@ class user{
     }
 
     public function create($params){
-        #if any parameter is missing, return a bad request status code
-        if( empty($params->name) ||
-            empty($params->surname) ||
-            empty($params->email) ||
-            empty($params->password)
-            ){
-            echo 'HTTP/1.1 400 Missing parameter';
-            header('HTTP/1.1 400 Bad Request');
-            die();
-        }
-
-        #create user
-        $response = Db::createAccount(json_decode($_POST['json']), false, '', '1234');
-
-        if(!empty($response->status)){
-            echo 'HTTP/1.1 '.$response->status . ' ' . $response->message;
-            header('HTTP/1.1 '.$response->status);
-        }else{
-            return json_encode($response);
-        }
+        return 'this is create company';
     }
 
-    public function edit($params, $identifier){
-        echo "this is edit";
-        return json_encode($identifier);
+    public function edit($params){
+        return 'this is edit  company';
     }
 
     public function get($identifier){
-
-        $response = Db::getAccount($identifier);
-
-        return json_encode($response);
+        return 'this is get  company';
     }
 
     public function delete(){
-        return 'this is delete user';
+        return 'this is delete  company';
     }
 }
  ?>
