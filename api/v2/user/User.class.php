@@ -12,7 +12,7 @@ class user{
      * @return [object]         
      */
     public function route($method='', $paths = array(), $params = array()){
-
+        // var_dump($params);die();
         $identifier = !empty($paths['0']) ? $paths['0'] : '';
         //format the response
         $response = '';
@@ -47,7 +47,6 @@ class user{
                 $response = $class::create($params);
                 break;
             case 'PUT':
-            var_dump($params);
                 if(empty($identifier) || !is_numeric($identifier)){
                     echo 'HTTP/1.1 404 Not Found';
                     header('HTTP/1.1 404 Not Found');
@@ -93,18 +92,23 @@ class user{
             return json_encode($response);
         }
     }
-
-    public function edit($params, $identifier){
-        echo "this is edit";
-        return json_encode($identifier);
-    }
-
     public function get($identifier){
 
         $response = Db::getAccount($identifier);
 
         return json_encode($response);
     }
+
+    public function edit($params, $identifier){
+
+        $response = Db::editAccount($params, $identifier);
+        if(!empty($response->status)){
+            return 'there has been an error';
+        }else{
+            return json_encode($response);
+        }
+    }
+
 
     public function delete(){
         return 'this is delete user';

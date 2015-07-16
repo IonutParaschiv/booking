@@ -13,9 +13,12 @@
 	}
 </style>
 <body>
+<!-- CREATE USER -->
 <h3> Create user</h3>
 <p>Url</p>
 <code>http://localhost/bachelor/api/v2/user/</code>
+<p>Method</p>
+<code>POST</code>
 <p>Parameters</p>
 <code>
 {
@@ -23,6 +26,21 @@
 	"surname": "Doe",
 	"email":"joe@doe.com",
 	"password":"1234"
+}
+</code>
+
+<br/><br><hr/>
+<!-- EDIT USER -->
+<h3> Edit user</h3>
+<p>Url</p>
+<code>http://localhost/bachelor/api/v2/user/{userid}</code>
+<p>Method</p>
+<code>PUT</code>
+<p>Parameters</p>
+<code>
+{
+	"name": "Joe",
+	"surname": "Doe"
 }
 </code>
 

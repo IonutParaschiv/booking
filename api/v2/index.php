@@ -54,18 +54,22 @@ $accepted_methods = array(
     );
 
 
-// var_dump($method);die();
+// $json = urldecode(file_get_contents("php://input"));
+// $json = str_replace("json=", '', $json);
+// var_dump(json_decode($json));die();
+
+
 #TO DO request body manipulation
 if(isset($_POST['json'])){
     var_dump("here");
     $json = json_decode($_POST['json']);
-}elseif(isset($_PUT['json'])){
-    var_dump("in patch");
-    parse_str(file_get_contents("php://input"),$post_vars);
-    var_dump($post_vars);
-    $json = json_decode($_PUT['json']);
+}elseif($method = 'PUT'){
+    $json = urldecode(file_get_contents("php://input"));
+    $json = str_replace("json=", '', $json);
+    $json = json_decode($json);
+    // var_dump(json_decode($json));die();
 }
-
+var_dump($method);die();
 if(in_array($method, $accepted_methods) &&
    in_array($path['0'], $accepted_paths)){
     $valid = true;

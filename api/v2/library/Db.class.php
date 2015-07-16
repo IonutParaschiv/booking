@@ -118,6 +118,7 @@ class Db{
     public function editAccount($params, $accId){
 //UPDATE `bachelor`.`account` SET `name` = 'testeress', `surname` = 'testingsensensen' WHERE `account`.`id` = 2;
         unset($params->id, $params->apiKey);
+        unset($params->email, $params->password);
         $fields = array();
         foreach ($params as $key => $value) {
             $set = $key." = '".$value."'";
