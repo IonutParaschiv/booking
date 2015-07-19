@@ -12,8 +12,6 @@ $rawPath = $_SERVER['REQUEST_URI'];
 //define request body
 $json = array();
 
-
-
 #start authentication
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -24,6 +22,16 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     }else {
         $username = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
+        $response = Security::checkLogin($username, $password);
+
+        if($response->success){
+            $userid = $response->uid;
+            $access = true;
+        }else{
+            header('HTTP/1.0 403 Unauthorized');
+            echo 'Invalid credentials';
+            die();
+        }
 }
 
 
@@ -54,39 +62,37 @@ $accepted_methods = array(
     );
 
 
-// $json = urldecode(file_get_contents("php://input"));
-// $json = str_replace("json=", '', $json);
-// var_dump(json_decode($json));die();
-
-
 #TO DO request body manipulation
 if(isset($_POST['json'])){
-    var_dump("here");
     $json = json_decode($_POST['json']);
-}elseif($method = 'PUT'){
+}elseif($method == 'PUT'){
     $json = urldecode(file_get_contents("php://input"));
     $json = str_replace("json=", '', $json);
     $json = json_decode($json);
-    // var_dump(json_decode($json));die();
 }
-var_dump($method);die();
+
 if(in_array($method, $accepted_methods) &&
    in_array($path['0'], $accepted_paths)){
     $valid = true;
 }
 
+if($access){
+    if($valid){
 
-if($valid){
+        $class = new $path['0']();
+        unset($path['0']);
+        $path = array_values($path);
 
-    $class = new $path['0']();
-    unset($path['0']);
-    $path = array_values($path);
-
-    $response = $class->route($method, $path, $json);
-    
+        $response = $class->route($method, $path, $json, $userid);
+        
+    }else{
+        header('HTTP/1.0 501 Not implemented');
+        echo('HTTP/1.0 501 Not implemented');
+        die();
+    }
 }else{
-    header('HTTP/1.0 501 Not implemented');
-    echo('HTTP/1.0 501 Not implemented');
+    header('HTTP/1.0 403 Unauthorized');
+    echo 'Invalid credentials';
     die();
 }
 

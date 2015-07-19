@@ -472,14 +472,14 @@ class Db{
             return "Staff member could not be edited";
         }
     }
-    public function getStaff($staffId){
+    public function getStaff($companyid, $staffId){
         $conn = self::conn();
-        $query = "SELECT * FROM ". self::DATABASE_NAME . ".staff WHERE id = :staffId";
+        $query = "SELECT * FROM ". self::DATABASE_NAME . ".staff WHERE id = :staffId AND company_id = :companyId";
 
         $stmt = $conn->prepare($query);
 
         $stmt->bindParam(':staffId', $staffId);
-
+        $stmt->bindParam(':companyId', $companyid);
         $result = $stmt->execute();
 
         if($result){

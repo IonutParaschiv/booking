@@ -28,23 +28,26 @@ class Security{
     }
     public function checkLogin($username, $password){
         $user = Db::getLogin($username);
+        $response = new stdClass();
+
         // var_dump($user);die();
         if(!empty($user)){
             if(     ($user['0']['token'] === $password) 
                 ||  ($user['0']['password'] === self::hashString($password.$user['0']['salt']))   ){
-                $response = array(
-                    'success'=>true, 
-                    'key'=>$user['0']['apiKey'],
-                    'token' => $user['0']['token'],
-                    'uid' => $user['0']['id'],
-                    'email' => $user['0']['email']
-                );
+                $response->success = true;
+                $response->key = $user['0']['apiKey'];
+                $response->token = $user['0']['token'];
+                $response->uid = $user['0']['id'];
+                $response->email = $user['0']['email'];
+
                 return $response;
             }else{
-                return false;
+                $response->success = false;
+                return $response;
             }
         }else{
-            return false;
+            $response->success = false;
+            return $response;
         }       
     }
 }

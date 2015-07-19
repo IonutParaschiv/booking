@@ -1,13 +1,11 @@
 <?php 
-/**
- * This class handles the staff calls
- */
+	class company_service{
+	public function create($params, $accountid, $companyid){
 
-class company_staff{
+		$response = Db::createService($companyid, $params);
 
-    public function create($params, $accountid, $companyid){
-        var_dump($params, $companyid);die();
-        return 'this is create staff';
+
+    	return json_encode($response);
     }
 
     public function edit($params){
@@ -28,5 +26,5 @@ class company_staff{
     public function getAll($companyid){
 
     }
-}
+	}
  ?>

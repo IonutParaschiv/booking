@@ -12,7 +12,7 @@ class company{
      * @return [object]         
      */
 
-    public function route($method='', $paths = array()){
+    public function route($method='', $paths = array(), $params, $userid){
 
         $identifier = !empty($paths['0']) ? $paths['0'] : '';
         //format the response
@@ -30,22 +30,21 @@ class company{
             die();
         }elseif(!empty($paths['1'])){
             #if all is fine, route to desired class
-            $classname = 'user_'.$paths['1'];
+            $classname = 'company_'.$paths['1'];
             $class = new $classname;
-            $identifier = !empty($paths['2']) ? $paths['2'] : '';
+            $identifier_subclass = !empty($paths['2']) ? $paths['2'] : '';
+
 
         }
         switch ($method) {
             case 'GET':
                 if(empty($identifier) || !is_numeric($identifier)){
-                    echo 'HTTP/1.1 404 Not Found';
-                    header('HTTP/1.1 404 Not Found');
-                    die();
-                }
-                $response = $class::get($identifier);
+                    $response = $class::getAll($userid, $identifier);
+                }else{
+                    $response = $class::get($identifier, $identifier_subclass);                }
                 break;
             case 'POST':
-                $response = $class::create('string');
+                $response = $class::create($params, $userid, $identifier);
                 break;
             case 'PUT':
                 if(empty($identifier) || !is_numeric($identifier)){
@@ -53,7 +52,7 @@ class company{
                     header('HTTP/1.1 404 Not Found');
                     die();
                 }
-                $response = $class::edit('string');
+                $response = $class::edit($identifier, $params, $userid);
                 break;
             case 'DELETE':
                 if(empty($identifier) || !is_numeric($identifier)){
@@ -61,7 +60,7 @@ class company{
                     header('HTTP/1.1 404 Not Found');
                     die();
                 }
-                $response = $class::delete();
+                $response = $class::delete($userid, $identifier);
                 break;
             default:
                 header('HTTP/1.0 501 Not implemented');
@@ -71,20 +70,38 @@ class company{
         return $response;
     }
 
-    public function create($params){
-        return 'this is create company';
+    public function create($params, $userid){
+        $response = Db::createCompany($userid, $params);
+
+        return json_encode($response);
     }
 
-    public function edit($params){
-        return 'this is edit  company';
+    public function edit($identifier, $params, $userid){
+        $response = Db::editCompany($identifier, $userid, $params);
+
+
+        return json_encode($response);
     }
 
     public function get($identifier){
-        return 'this is get  company';
+
+        $response = Db::getCompany($identifier);
+
+        return json_encode($response);
+        // return 'this is get  company';
     }
 
-    public function delete(){
-        return 'this is delete  company';
+    public function delete($userid, $identifier){
+
+        $response = Db::deleteCompany($userid, $identifier);
+
+        return json_encode($response);
+    }
+
+    public function getAll($userid){
+        $response = Db::getAccountCompanies($userid);
+
+        return json_encode($response);
     }
 }
  ?>
