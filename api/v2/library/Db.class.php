@@ -382,6 +382,76 @@ class Db{
         }
         return false;
     }
+    public function getService($companyId, $serviceId){
+        $conn = self::conn();
+        $query = "SELECT * FROM ".self::DATABASE_NAME. ".service WHERE company_id = :companyid AND id = :serviceid";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':companyid', intval($companyId));
+        $stmt->bindParam(':serviceid', intval($serviceId));
+
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+
+    }
+/**
+ * This function deletes a service by id
+ * @param  [int] $companyId [the company id associated to the service]
+ * @param  [int] $serviceId [the service id]
+ * @return [bool]            
+ */
+    public function deleteService($companyId, $serviceId){
+        $conn = self::conn();
+
+        $query = "DELETE FROM " .self::DATABASE_NAME. ".service WHERE company_id = :companyid AND id = :serviceid";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':companyid', intval($companyId));
+        $stmt->bindParam(':serviceid', intval($serviceId));
+
+        $result = $stmt->execute();
+
+        return $result;
+    }
+/**
+ * This function edits an existing service
+ * @param  [int] $serviceId [the service identifier]
+ * @param  [int] $companyId [The company id associated with specific service]
+ * @param  [json] $params    [values to be edited]
+ * @return [object]            [the edited service]
+ */
+public function editService($serviceId, $companyId, $params){
+     $conn = self::conn();
+
+        $fields = array();
+        foreach ($params as $key => $value) {
+            $set = $key." = '".$value."'";
+            array_push($fields, $set);
+        }
+        $fields = implode(', ', $fields);
+
+
+        $query = "UPDATE ". self::DATABASE_NAME. ".service SET ".$fields." WHERE service.id = :serviceid AND company_id = :companyid";
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':companyid', intval($companyId));
+        $stmt->bindParam(':serviceid', intval($serviceId));
+
+        $result = $stmt->execute();
+
+        if($result){
+            return self::getService($companyId, $serviceId);
+        }else{
+            return false;
+        }
+}   
 /**
  * This function inserts a staff member into the database
  * @param  [array] $params [parameters to be added in the staf table]
@@ -397,7 +467,13 @@ class Db{
 
             $stmt = $conn->prepare($query);
 
-            $services = self::getServicesById($params->services);
+            #if no services are supplied, the field is null
+            if(empty($params->services)){
+                $services = NULL;
+            }else{
+                $services = self::getServicesById($params->services);
+            }
+            
 
             $stmt->bindParam(':company_id', $companyid);
             $stmt->bindParam(':name', $params->name);
@@ -411,17 +487,21 @@ class Db{
             if($result){
                 $newStaff = self::getLatest('staff');
                 $newStaffId = $newStaff['0']['id'];
-                foreach ($params->services as $index => $serviceId) {
-                    $insertQuery = "INSERT INTO ". self::DATABASE_NAME . ".staffService (id, staff_id, service_id)
-                    VALUES ('', :staffId, :serviceId)";
 
-                    $insert = $conn->prepare($insertQuery);
+                if(!empty($params->services)){
+                    foreach ($params->services as $index => $serviceId) {
+                        $insertQuery = "INSERT INTO ". self::DATABASE_NAME . ".staffService (id, staff_id, service_id)
+                        VALUES ('', :staffId, :serviceId)";
 
-                    $insert->bindParam(':staffId', $newStaffId);
-                    $insert->bindParam(':serviceId', $serviceId);
+                        $insert = $conn->prepare($insertQuery);
 
-                    $row = $insert->execute();
+                        $insert->bindParam(':staffId', $newStaffId);
+                        $insert->bindParam(':serviceId', $serviceId);
+
+                        $row = $insert->execute();
+                    }
                 }
+                
                 return $newStaff;
             }else{
                 return "Staff member could not be created";
@@ -450,9 +530,15 @@ class Db{
  * @param  [object] $params  [paramenters to be edited]
  * @return [object]          [edited staff member]
  */
-    public function editStaff($staffId, $params){
+    public function editStaff($staffId, $params, $companyId){
         $conn = self::conn();
-        //UPDATE `bachelor`.`staff` SET `name` = 'jaxie', `surname` = 'seymoursen', `email` = 'jax@seymourmeh.com', `available_h` = 'most of the times' WHERE `staff`.`id` = 2;
+        
+         #if no services are supplied, the field is null
+        if(isset($params->services)){
+            $services = self::getServicesById($params->services);
+            $params->services = json_encode($services);
+        }
+        // var_dump($params);die();
         $fields = array();
         foreach ($params as $key => $value) {
             $set = $key." = '".$value."'";
@@ -467,11 +553,17 @@ class Db{
         $result = $stmt->execute();
 
         if($result){
-            return self::getStaff($staffId);
+            return self::getStaff( $companyId, $staffId);
         }else{
             return "Staff member could not be edited";
         }
     }
+    /**
+     * This function returns a single staff member
+     * @param  [type] $companyid [description]
+     * @param  [type] $staffId   [description]
+     * @return [type]            [description]
+     */
     public function getStaff($companyid, $staffId){
         $conn = self::conn();
         $query = "SELECT * FROM ". self::DATABASE_NAME . ".staff WHERE id = :staffId AND company_id = :companyId";
@@ -489,9 +581,47 @@ class Db{
         }
 
     }
+    /**
+     * This function returns all staff members associated to a company id
+     * @param  [type] $companyid [description]
+     * @return [type]            [description]
+     */
+    public function getCompanyStaff($companyid){
+        $conn = self::conn();
+        $query = "SELECT * FROM ". self::DATABASE_NAME . ".staff WHERE company_id = :companyId";
 
+        $stmt = $conn->prepare($query);
 
+        $stmt->bindParam(':companyId', $companyid);
 
+        $result = $stmt->execute();
+
+        if($result){
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return false;
+        }
+    }
+    /**
+     * this function deletes a staff member
+     * @param  [type] $companyId [description]
+     * @param  [type] $staffId   [description]
+     * @return [type]            [description]
+     */
+     public function deleteStaff($companyId, $staffId){
+        $conn = self::conn();
+
+        $query = "DELETE FROM " .self::DATABASE_NAME. ".staff WHERE company_id = :companyid AND id = :staffid";
+
+        $stmt = $conn->prepare($query);
+
+        $stmt->bindParam(':companyid', intval($companyId));
+        $stmt->bindParam(':staffid', intval($staffId));
+
+        $result = $stmt->execute();
+
+        return $result;
+    }
 
     public function createBooking($params){
         $conn = self::conn();

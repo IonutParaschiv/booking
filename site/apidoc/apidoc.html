@@ -73,7 +73,7 @@
 
 	<br/><br><hr/>
 	<!-- Edit company -->
-	<h3> Edit user</h3>
+	<h3> Edit Company</h3>
 	<p>Url</p>
 	<code>http://localhost/bachelor/api/v2/company/{companyId}</code>
 	<p>Method</p>
@@ -89,10 +89,47 @@
 	</code>
 <br/><br><hr/>
 </div>
-<!-- END USER DOC -->
+<!-- END COMPANY DOC -->
+<div class="serviceDoc tiles">
+	<!-- Create company -->
+	<h3> Create Service</h3>
+	<p>Url</p>
+	<code>http://localhost/bachelor/api/v2/company/{companyId}/service</code>
+	<p>Method</p>
+	<code>POST</code>
+	<p>Parameters</p>
+	<code>
+	{
+		"name": "Service #1",
+		"price": 120,
+		"description": "This is one awesome service",
+		"duration": 145
+	}
+	</code>
+
+	<br/><br><hr/>
+	<!-- Edit company -->
+	<h3> Edit Service</h3>
+	<p>Url</p>
+	<code>http://localhost/bachelor/api/v2/company/{companyId}/service/{serviceId}</code>
+	<p>Method</p>
+	<code>PUT</code>
+	<p>Parameters</p>
+	<code>
+	{
+		"name": "Service #1",
+		"price": 120,
+		"description": "This is one awesome service",
+		"duration": 145
+	}
+	</code>
+<br/><br><hr/>
+</div>
+<!-- END SERVIVE DOC -->
+
 <div class="staffDoc tiles">
 	<!-- Create company -->
-	<h3> Create Company</h3>
+	<h3> Create Service</h3>
 	<p>Url</p>
 	<code>http://localhost/bachelor/api/v2/company/{companyId}/staff</code>
 	<p>Method</p>
@@ -100,27 +137,27 @@
 	<p>Parameters</p>
 	<code>
 	{
-		"name": "My company",
-		"email": "company@email.com",
-		"address": "Nannase 12, 3, 404, Copenhagen",
-		"opening_h": "Mon-Fri: 09:00 - 17:00"
+		"name": "Staff",
+		"surname": "Member",
+		"email": "staff@member.com",
+		"services": [16, 17, 18]
 	}
 	</code>
 
 	<br/><br><hr/>
-	<!-- Edit company -->
-	<h3> Edit user</h3>
+	<!-- Edit staff -->
+	<h3> Edit staff</h3>
 	<p>Url</p>
-	<code>http://localhost/bachelor/api/v2/company/{companyId}</code>
+	<code>http://localhost/bachelor/api/v2/company/{companyId}/staff/{staffId}</code>
 	<p>Method</p>
 	<code>PUT</code>
 	<p>Parameters</p>
 	<code>
 	{
-		"name": "My company",
-		"email": "company@email.com",
-		"address": "Nannase 12, 3, 404, Copenhagen",
-		"opening_h": "Mon-Fri: 09:00 - 17:00"
+		"name": "Staff",
+		"surname": "Member",
+		"email": "staff@member.com",
+		"services": [16, 17, 18]
 	}
 	</code>
 <br/><br><hr/>

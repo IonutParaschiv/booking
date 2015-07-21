@@ -6,12 +6,19 @@
 class company_staff{
 
     public function create($params, $accountid, $companyid){
-        var_dump($params, $companyid);die();
-        return 'this is create staff';
+
+        $response = Db::createStaff($companyid, $params);
+
+        return json_encode($response);
+
     }
 
-    public function edit($params){
-        return 'this is edit staff';
+    public function edit($companyid, $params, $staffid){
+        
+        $response = Db::editStaff($staffid, $params, $companyid);
+
+        return json_encode($response);
+
     }
 
     public function get($companyid, $staffid){
@@ -21,12 +28,18 @@ class company_staff{
         return json_encode($response);
     }
 
-    public function delete(){
-        return 'this is delete staff';
+    public function delete($companyid, $staffid){
+
+        $response = Db::deleteStaff($companyid, $staffid);
+
+
+        return json_encode($response);
     }
 
-    public function getAll($companyid){
+    public function getAll($userId, $companyid){
+        $response = Db::getCompanyStaff($companyid);
 
+        return json_encode($response);
     }
 }
  ?>

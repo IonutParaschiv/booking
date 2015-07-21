@@ -25,7 +25,7 @@ class company{
             $class = 'company';
 
         }elseif(!empty($paths['0']) && !is_numeric($paths['0'])){#check if the first parameter is numeric. if it's not, it is an invalid call
-            echo 'HTTP/1.1 404 Not Found from 27';
+            echo 'HTTP/1.1 404 Not Found';
             header('HTTP/1.1 404 Not Found');
             die();
         }elseif(!empty($paths['1'])){
@@ -34,14 +34,17 @@ class company{
             $class = new $classname;
             $identifier_subclass = !empty($paths['2']) ? $paths['2'] : '';
 
-
         }
         switch ($method) {
             case 'GET':
-                if(empty($identifier) || !is_numeric($identifier)){
+                if((empty($identifier) || !is_numeric($identifier)) ||
+                    (empty($identifier_subclass) || !is_numeric($identifier_subclass))
+                    ){
                     $response = $class::getAll($userid, $identifier);
                 }else{
-                    $response = $class::get($identifier, $identifier_subclass);                }
+
+                    $response = $class::get($identifier, $identifier_subclass);
+                }
                 break;
             case 'POST':
                 $response = $class::create($params, $userid, $identifier);
@@ -52,7 +55,12 @@ class company{
                     header('HTTP/1.1 404 Not Found');
                     die();
                 }
-                $response = $class::edit($identifier, $params, $userid);
+
+                if(!empty($identifier_subclass)){
+                    $response = $class::edit($identifier, $params, $identifier_subclass);
+                }else{
+                    $response = $class::edit($identifier, $params, $userid);
+                }
                 break;
             case 'DELETE':
                 if(empty($identifier) || !is_numeric($identifier)){
@@ -60,7 +68,12 @@ class company{
                     header('HTTP/1.1 404 Not Found');
                     die();
                 }
-                $response = $class::delete($userid, $identifier);
+
+                if(!empty($identifier_subclass)){
+                    $response = $class::delete($identifier, $identifier_subclass);
+                }else{
+                    $response = $class::delete($userid, $identifier);
+                }
                 break;
             default:
                 header('HTTP/1.0 501 Not implemented');
@@ -88,7 +101,6 @@ class company{
         $response = Db::getCompany($identifier);
 
         return json_encode($response);
-        // return 'this is get  company';
     }
 
     public function delete($userid, $identifier){

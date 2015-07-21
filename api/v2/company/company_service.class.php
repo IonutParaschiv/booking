@@ -8,23 +8,31 @@
     	return json_encode($response);
     }
 
-    public function edit($params){
-        return 'this is edit staff';
+    public function edit($companyid, $params, $serviceid){
+        $response = Db::editService($serviceid, $companyid, $params);
+
+        return json_encode($response);
     }
 
-    public function get($companyid, $staffid){
-        $response = Db::getStaff($companyid, $staffid);
+    public function get($companyid, $serviceId){
+
+        $response = Db::getService($companyid, $serviceId);
 
 
         return json_encode($response);
     }
 
-    public function delete(){
-        return 'this is delete staff';
+    public function delete($companyid, $serviceid){
+        $response = Db::deleteService($companyid,$serviceid);
+
+        return json_encode($response);
     }
 
-    public function getAll($companyid){
+    public function getAll($userId, $companyid){
 
+        $response = Db::getCompanyServices($companyid);
+
+        return json_encode($response);
     }
 	}
  ?>
