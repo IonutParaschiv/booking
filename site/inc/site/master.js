@@ -40,7 +40,17 @@ login: function(){
       },
     });
 },
+logout: function(){
+    $.ajax({
 
+        type: "POST",
+        url: "/bachelor/site/inc/lib/php/RequestHandler.php",
+        data: "method=logout" ,
+        success: function(data){
+              window.location.href = "/bachelor/site";
+        },
+      });
+  },
 
 register: function(){
     var args = $("#registerForm").serialize();

@@ -47,7 +47,11 @@ unset(
 );
 //reset array indexes
 $path = array_values($path);
-
+// var_dump($path);die();
+if($path[0] == 'login'){
+    echo  json_encode(Security::checkLogin($username, $password));
+    die();
+}
 
 #set arrays of accepted methods and paths
 $accepted_paths = array(

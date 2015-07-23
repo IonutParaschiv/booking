@@ -18,6 +18,7 @@
       <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>';
       }else{
         echo '<li><a href="views/account.php">My Account</a></li>';
+        echo '<li><a href="" onclick="user.logout();return false;">Logout</a></li>';
       }
       ?>
     </ul>

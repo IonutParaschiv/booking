@@ -1,4 +1,11 @@
-<?php ?>
+<?php 
+  if(!empty($_COOKIE['userSession'])){
+      $cookie = json_decode(base64_decode($_COOKIE['userSession']));
+      $userId = $cookie->uid;
+  }else{
+      header('Location:/bachelor/site');
+  }
+?>
 
 <!DOCTYPE html>
 <html>
@@ -25,6 +32,7 @@
         <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>';
         }else{
           echo '<li><a href="#">My Account</a></li>';
+          echo '<li><a href="" onclick="user.logout();return false;">Logout</a></li>';
         }
         ?>
       </ul>
@@ -56,7 +64,7 @@
       <div class="companyBlocks availableCompanies">
         <h5 class="formTitle"> Available Companies</h5>
         <div class="userfeedback_company_edit"></div>
-        <script>company.getAll();</script>
+        <!-- <script>company.getAll();</script> -->
         <form id="companyEditForm">
             <div class="form-group">
               <select onchange="company.get()" class="availableCompaniesSelect" data-style="btn-primary" name="companyId" id="availableCompaniesSelect">

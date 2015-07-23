@@ -30,7 +30,7 @@ switch ($_POST['method']) {
             'password' => 'ionut280590'
             );
 
-        $result = PostRequest('/api/account', $args, $auth);
+        $result = PostRequest('/api/v2/user', $args, $auth);
         if($result->success){
             echo json_encode($result);
         }
@@ -60,10 +60,10 @@ switch ($_POST['method']) {
             "password" => $args->password
             );
 
-        $result = GetRequest(API_URL.'/api/account/', $args, $auth);
-
+        $result = GetRequest(API_URL.'/api/v2/login/', $args, $auth);
         if($result->success){
             $responseJson = json_decode($result->data);
+
             if($responseJson->success){
                 $response = array(
                     'success' =>true
@@ -79,7 +79,7 @@ switch ($_POST['method']) {
                 $secure = isset($_SERVER['HTTPS']);
                 $httponly = true;
                 $path = '/';
-                setcookie("userSession", json_encode($usrArray), time()+360*5, $path, NULL, $secure, $httponly);
+                setcookie("userSession", base64_encode(json_encode($usrArray)), time()+360*5, $path, NULL, $secure, $httponly);
 
             }else{
                 $response = array(
@@ -98,6 +98,18 @@ switch ($_POST['method']) {
             echo json_encode($response);
             die();
         break;
+        case 'logout':
+
+          if (isset($_SERVER['HTTP_COOKIE'])) {
+                $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                foreach($cookies as $cookie) {
+                    $parts = explode('=', $cookie);
+                    $name = trim($parts[0]);
+                    setcookie($name, '', time()-1000);
+                    setcookie($name, '', time()-1000, '/');
+                }
+            }
+            break;
         case "getAccount":
 
             $password = $_SESSION['token'];
@@ -107,7 +119,7 @@ switch ($_POST['method']) {
                 'password' => $password
                 );
 
-            $response = getData(API_URL.'api/account/'.$_POST['id'], $auth);
+            $response = getData(API_URL.'api/v2/user/'.$_POST['id'], $auth);
             if($response->success){
                 echo $response->data;
             }
@@ -131,7 +143,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'], $args, $auth);
+            $response = PostRequest(API_URL.'/api/v2/user/'.$_SESSION['uid'], $args, $auth);
 
             if($response->success){
                 echo json_encode($response->data);
@@ -155,7 +167,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'].'/company', $args, $auth);
+            $response = PostRequest(API_URL.'/api/v2/user/'.$_SESSION['uid'].'/company', $args, $auth);
             if($response->success){
                 echo json_encode($response);
             }else{
@@ -184,7 +196,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $response = PostRequest(API_URL.'/api/account/'.$_SESSION['uid'].'/company/'.$data['companyId'], $args, $auth);
+            $response = PostRequest(API_URL.'/api/v2/user/'.$_SESSION['uid'].'/company/'.$data['companyId'], $args, $auth);
             if($response->success){
                 echo json_encode($response);
             }else{
@@ -207,7 +219,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = API_URL.'/api/account/'. $_SESSION['uid'].'/company/'.$data['companyId'];
+            $url = API_URL.'/api/v2/user/'. $_SESSION['uid'].'/company/'.$data['companyId'];
             $response = deleteEntry($url ,$auth);
 
             echo $response;
@@ -224,7 +236,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = API_URL.'/api/account/'.$_SESSION['uid'].'/company/'.$data['companyid'];
+            $url = API_URL.'/api/v2/user/'.$_SESSION['uid'].'/company/'.$data['companyid'];
             $result = GetRequest($url ,array(), $auth);
             if($result->success){
                 echo json_encode($result);
@@ -240,7 +252,7 @@ switch ($_POST['method']) {
                 'email' => $email,
                 'password' => $password
                 );
-            $url = API_URL.'/api/account/'.$_SESSION['uid'].'/company';
+            $url = API_URL.'/api/v2/user/'.$_SESSION['uid'].'/company';
             $result = getData($url , $auth);
             if($result->success){
                 echo json_encode($result);
@@ -273,7 +285,7 @@ switch ($_POST['method']) {
             $args->description = $data['description'];
             $args->duration = $data['duration'];
 
-            $url = API_URL.'/api/company/'.$data['companyId'].'/service';
+            $url = API_URL.'/api/v2/company/'.$data['companyId'].'/service';
 
             $result = PostRequest($url, $args, $auth);
             if($result->success){
@@ -312,7 +324,7 @@ switch ($_POST['method']) {
             $args->email = $data['email'];
             $args->services = $data['services'];
 
-            $url = API_URL.'/api/company/'.$data['companyId'].'/staff';
+            $url = API_URL.'/api/v2/company/'.$data['companyId'].'/staff';
 
             $result = PostRequest($url, $args, $auth);
             if($result->success){
@@ -403,7 +415,7 @@ function GetRequest($host, $args = array(), $authArgs = array()){
     $password = $authArgs['password'];
     $query_string = http_build_query($params);  
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $host."?".$query_string);
+    curl_setopt($ch, CURLOPT_URL, $host);
     // curl_setopt($ch, CURLOPT_URL, $host);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($ch, CURLOPT_USERPWD, $email.":".$password);
@@ -438,7 +450,6 @@ function GetRequest($host, $args = array(), $authArgs = array()){
 function getData($path, $authArgs){
     $email = $authArgs['email'];
     $password = $authArgs['password'];
-    // var_dump($path);die();
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $path);
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -452,7 +463,6 @@ function getData($path, $authArgs){
     $jsondata = curl_exec($ch);
     curl_close($ch);
 
-    // var_dump($jsondata);die();
     if($data = json_decode($jsondata)) {
         $response = new stdClass();
         $response->status = 200;

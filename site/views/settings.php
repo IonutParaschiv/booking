@@ -14,9 +14,11 @@
 
 <?php
 if(!empty($_COOKIE['userSession'])){
-    $cookie = json_decode($_COOKIE['userSession']);
+    $cookie = json_decode(base64_decode($_COOKIE['userSession']));
     $userId = $cookie->uid;
-    echo " <script> fill.accountForm(".$userId."); </script>";
+    // echo " <script> fill.accountForm(".$userId."); </script>";
+}else{
+    header('Location:/bachelor/site');
 }
 ?>
 
@@ -29,6 +31,7 @@ if(!empty($_COOKIE['userSession'])){
       <li><a href="#" data-toggle="modal" data-target=".registerModal">Register</a></li>';
       }else{
         echo '<li><a href="#">My Account</a></li>';
+        echo '<li><a href="" onclick="user.logout();return false;">Logout</a></li>';
       }
       ?>
     </ul>
